@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Collection - Fun Games for Everyone!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-title {
+            font-size: 4rem;
+            color: #fff;
+            text-shadow: 3px 3px 0px #FF6B35;
+            margin-bottom: 20px;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .main-title:hover {
+            transform: scale(1.05);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #f0f0f0;
+            margin-bottom: 30px;
+        }
+
+        .description {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-card:active {
+            transform: translateY(-5px);
+            animation: bounce 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-5px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .game-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .game-title {
+            font-size: 2rem;
+            color: #FF6B35;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .game-description {
+            font-size: 1.1rem;
+            color: #555;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .game-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .game-features li {
+            padding: 8px 0;
+            color: #666;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .game-features li::before {
+            content: '🎮';
+            position: absolute;
+            left: 0;
+            top: 8px;
+        }
+
+        .play-button {
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .play-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .coming-soon .play-button {
+            background: linear-gradient(45deg, #ccc, #999);
+            cursor: not-allowed;
+        }
+
+        .coming-soon .play-button:hover {
+            transform: none;
+            box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #FF6B35;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: #f0f0f0;
+        }
+
+        footer h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        footer p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFD700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .game-card {
+                padding: 20px;
+            }
+
+            .stats {
+                gap: 20px;
+            }
+
+            .stat-item {
+                min-width: 100px;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .description {
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="main-title">🎮 Game Collection 🎮</h1>
+            <p class="subtitle">Fun, Interactive Games for Everyone!</p>
+            <p class="description">
+                Welcome to our collection of exciting, family-friendly games! Built with love using HTML, CSS, and JavaScript. 
+                Perfect for kids, families, and anyone who loves a good challenge.
+            </p>
+        </header>
+
+        <main>
+            <div class="games-grid">
+                <!-- Chili Dog Match Game -->
+                <a href="chili-dog-match/index.html" class="game-card">
+                    <div class="game-icon">🌭🦔</div>
+                    <h2 class="game-title">Chili Dog Match</h2>
+                    <p class="game-description">
+                        A thrilling 2-player Sonic-themed memory card matching game! Test your memory skills 
+                        while enjoying colorful Sonic characters and exciting sound effects.
+                    </p>
+                    <ul class="game-features">
+                        <li>2-Player competitive gameplay</li>
+                        <li>3 difficulty levels (Easy, Medium, Hard)</li>
+                        <li>12 beloved Sonic characters</li>
+                        <li>Celebration effects with confetti & balloons</li>
+                        <li>Fun sound effects and animations</li>
+                        <li>Mobile & desktop responsive</li>
+                    </ul>
+                    <button class="play-button">🚀 Play Now!</button>
+                </a>
+
+                <!-- Placeholder for future games -->
+                <div class="game-card coming-soon">
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <div class="game-icon">🧩</div>
+                    <h2 class="game-title">Puzzle Palace</h2>
+                    <p class="game-description">
+                        Challenge your mind with sliding puzzles, jigsaw challenges, and brain teasers! 
+                        Multiple difficulty levels for puzzle enthusiasts of all ages.
+                    </p>
+                    <ul class="game-features">
+                        <li>Multiple puzzle types</li>
+                        <li>Progressive difficulty</li>
+                        <li>Beautiful artwork</li>
+                        <li>Time challenges</li>
+                        <li>Achievement system</li>
+                        <li>Relaxing gameplay</li>
+                    </ul>
+                    <button class="play-button">Coming Soon</button>
+                </div>
+
+                <div class="game-card coming-soon">
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <div class="game-icon">🚀</div>
+                    <h2 class="game-title">Space Adventure</h2>
+                    <p class="game-description">
+                        Blast off into space! Navigate through asteroid fields, collect power-ups, 
+                        and explore the galaxy in this exciting arcade-style adventure.
+                    </p>
+                    <ul class="game-features">
+                        <li>Infinite scrolling gameplay</li>
+                        <li>Power-ups and upgrades</li>
+                        <li>Multiple ships to unlock</li>
+                        <li>Leaderboard system</li>
+                        <li>Stunning space visuals</li>
+                        <li>Touch controls</li>
+                    </ul>
+                    <button class="play-button">Coming Soon</button>
+                </div>
+
+                <div class="game-card coming-soon">
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <div class="game-icon">🎯</div>
+                    <h2 class="game-title">Target Practice</h2>
+                    <p class="game-description">
+                        Test your aim and reflexes! Hit targets, earn points, and climb the leaderboard 
+                        in this fast-paced shooting gallery game.
+                    </p>
+                    <ul class="game-features">
+                        <li>Multiple game modes</li>
+                        <li>Moving targets</li>
+                        <li>Combo scoring system</li>
+                        <li>Precision challenges</li>
+                        <li>High score tracking</li>
+                        <li>Progressive difficulty</li>
+                    </ul>
+                    <button class="play-button">Coming Soon</button>
+                </div>
+
+                <div class="game-card coming-soon">
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <div class="game-icon">🎲</div>
+                    <h2 class="game-title">Board Game Bonanza</h2>
+                    <p class="game-description">
+                        Classic board games reimagined for the digital age! Play checkers, tic-tac-toe, 
+                        and other timeless favorites with friends or AI opponents.
+                    </p>
+                    <ul class="game-features">
+                        <li>Multiple classic games</li>
+                        <li>AI opponents</li>
+                        <li>Local multiplayer</li>
+                        <li>Tournament mode</li>
+                        <li>Statistics tracking</li>
+                        <li>Custom game rules</li>
+                    </ul>
+                    <button class="play-button">Coming Soon</button>
+                </div>
+
+                <div class="game-card coming-soon">
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <div class="game-icon">🌈</div>
+                    <h2 class="game-title">Color Quest</h2>
+                    <p class="game-description">
+                        Dive into a world of colors! Match, sort, and create beautiful patterns 
+                        in this relaxing and visually stunning puzzle adventure.
+                    </p>
+                    <ul class="game-features">
+                        <li>Color matching puzzles</li>
+                        <li>Pattern recognition</li>
+                        <li>Zen mode</li>
+                        <li>Beautiful gradients</li>
+                        <li>Meditative gameplay</li>
+                        <li>Accessibility features</li>
+                    </ul>
+                    <button class="play-button">Coming Soon</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <h3>🌟 Game Collection Stats 🌟</h3>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">1</span>
+                    <span class="stat-label">Games Available</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">5</span>
+                    <span class="stat-label">Coming Soon</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Fun Guaranteed</span>
+                </div>
+            </div>
+            <p>🎮 Built with HTML, CSS & JavaScript</p>
+            <p>✨ Designed for fun, learning, and entertainment</p>
+            <p>🔄 More games added regularly!</p>
+        </footer>
+    </div>
+
+    <script>
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate stats on page load
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const finalValue = stat.textContent;
+                if (!isNaN(parseInt(finalValue))) {
+                    animateNumber(stat, parseInt(finalValue));
+                }
+            });
+
+            // Add click sound effect (simple)
+            const gameCards = document.querySelectorAll('.game-card:not(.coming-soon)');
+            gameCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Simple click feedback
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+
+            // Prevent clicking on coming soon cards
+            const comingSoonCards = document.querySelectorAll('.game-card.coming-soon');
+            comingSoonCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Add shake animation
+                    this.style.animation = 'shake 0.5s ease';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                });
+            });
+        });
+
+        function animateNumber(element, target) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 30);
+        }
+
+        // Add shake animation for coming soon cards
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
