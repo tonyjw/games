@@ -110,6 +110,25 @@ games/
 
 ### Example Code Patterns
 
+#### Font Embedding (Fredoka)
+```css
+@font-face {
+    font-family: 'Fredoka';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    /* For offline: replace empty base64 with actual font data */
+    src: url('data:font/woff2;base64,') format('woff2'),
+         url('https://fonts.gstatic.com/s/fredoka/v14/...') format('woff2');
+}
+
+body {
+    font-family: 'Fredoka', 'Nunito', 'Quicksand', 'Varela Round', 
+                 'Comfortaa', 'Balsamiq Sans', 'Comic Sans MS', 
+                 system-ui, sans-serif;
+}
+```
+
 #### Sound Effects (Web Audio API)
 ```javascript
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -155,7 +174,7 @@ function saveGameData(data) {
 - Bright, vibrant color palettes suitable for all ages
 - Rounded corners and soft shadows for friendly appearance
 - Consistent design language across all games
-- Font stack: `'Comic Sans MS', cursive, sans-serif` for playful feel
+- Font stack: `'Fredoka', 'Nunito', 'Quicksand', 'Varela Round', 'Comfortaa', 'Balsamiq Sans', 'Comic Sans MS', system-ui, sans-serif` for modern, playful feel
 - Use emojis for icons when appropriate
 
 ### User Experience
@@ -164,6 +183,44 @@ function saveGameData(data) {
 - Clear visual hierarchy and intuitive navigation
 - Smooth animations that enhance rather than distract
 - Loading states and progress indicators
+
+### Navigation Requirements
+Every game must include standard navigation elements for consistency and usability:
+
+#### Required Navigation Elements
+1. **Back to Games Portal** - On the main game screen, include a prominent link/button to return to the main games collection (`../index.html`)
+2. **Restart Game** - When inside a game (playing), provide a clear way to restart/return to the beginning of the current game
+3. **Consistent Styling** - Navigation elements should match the game's visual design while remaining clearly identifiable
+
+#### Navigation Implementation Examples
+```html
+<!-- Back to games portal (on main game screen) -->
+<button class="nav-btn" onclick="window.location.href='../index.html'">🏠 All Games</button>
+
+<!-- Restart game (during gameplay) -->
+<button class="nav-btn" onclick="restartGame()">🔄 New Game</button>
+```
+
+#### Navigation CSS Standards
+```css
+.nav-btn {
+    background: linear-gradient(45deg, #FF6B35, #FFD700);
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px;
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+```
 
 ### Interaction Design
 - Large, touch-friendly buttons (minimum 44px)
@@ -195,6 +252,9 @@ function saveGameData(data) {
 - [ ] Local storage saves/loads correctly
 - [ ] No console errors
 - [ ] Smooth 60fps performance
+- [ ] Navigation elements present and functional
+- [ ] "Back to Games" button works from main game screen
+- [ ] "Restart/New Game" button works during gameplay
 
 ### Performance Testing
 - Test on slower devices and connections
@@ -219,6 +279,7 @@ function saveGameData(data) {
 - Performance benchmarks met
 - Browser compatibility verified
 - Documentation complete
+- **Navigation compliance** - Required navigation elements implemented and tested
 
 ## Common Development Tasks
 
