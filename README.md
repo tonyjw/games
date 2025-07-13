@@ -55,6 +55,37 @@ An interactive Web Audio API playground and comprehensive game sound library for
 
 [🎵 Explore Audio Library](audio-explorer/index.html)
 
+### 🐕 Pup Paradise Path - Circular Dog Board Game
+**Status: ✅ Available**
+
+A strategic circular board game adventure featuring adorable dog characters with unique abilities! Navigate the colorful path, collect coins, shop for toys, and be the first to complete your collection.
+
+**Key Features:**
+- 🎯 **2-4 Player Turn-Based Gameplay** - Strategic multiplayer with alternating turns
+- 🐕 **5 Unique Dog Characters** - Each with special abilities affecting gameplay strategy
+- 🛒 **Strategic Shop System** - Buy Tennis Balls (1 coin), Bones (2 coins), Stuffies (3 coins)
+- 🎲 **15-Tile Circular Board** - Multiple tile types with special effects and rewards
+- 🏆 **Collection Victory** - First to collect one of each toy type wins
+- 🎵 **Dynamic Sound Effects** - Integrated Audio Explorer library for immersive feedback
+- 📱 **Responsive Design** - Optimized for mobile, tablet, and desktop gameplay
+
+**Character Abilities:**
+- **Tank (Bulldog)**: Extra defense - reduces negative tile effects by half
+- **Fetch (Golden Retriever)**: Bonus coins - earns +1 extra coin on positive tiles
+- **Lucky (French Bulldog)**: Lucky rolls - gets to roll again on rolls of 6
+- **Brave (Pitbull)**: Fearless - immune to all negative tile effects
+- **Sneaky (Pug)**: Stealth move - can move backwards with negative rolls
+
+**How to Play:**
+1. Choose your dog character (each has unique abilities)
+2. Take turns rolling dice and moving around the circular board
+3. Collect coins from various tile types and special events
+4. Visit the shop to purchase toys using your earned coins
+5. Use character abilities strategically to gain advantages
+6. First player to collect one Tennis Ball, one Bone, and one Stuffie wins!
+
+[🐾 Play Pup Paradise Path](pup-paradise-path/index.html)
+
 ---
 
 ## 🚀 Getting Started
@@ -89,9 +120,12 @@ games/
 ├── chili-dog-match/          # Sonic memory game
 │   ├── index.html           # Complete game (HTML + CSS + JS)
 │   └── README.md            # Game-specific documentation
-└── audio-explorer/           # Web Audio API playground
-    ├── index.html           # Complete audio tool (HTML + CSS + JS)
-    └── README.md            # Tool-specific documentation
+├── audio-explorer/           # Web Audio API playground
+│   ├── index.html           # Complete audio tool (HTML + CSS + JS)
+│   └── README.md            # Tool-specific documentation
+└── pup-paradise-path/       # Circular dog board game
+    ├── index.html           # Complete game (HTML + CSS + JS)
+    └── README.md            # Game-specific documentation
 ```
 
 ## 🎯 Coming Soon

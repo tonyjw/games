@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pup Paradise Path - Circular Dog Board Game</title>
+    <style>
+        /* Import Fredoka Font from Google Fonts - will cache for offline use */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        
+        /* Enhanced font fallback stack for offline support */
+        .font-fredoka {
+            font-family: 'Fredoka', 'Comic Sans MS', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', 'Comic Sans MS', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 50%, #FFB6C1 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            font-size: 3.5rem;
+            color: #FF6B35;
+            text-shadow: 3px 3px 0px #FFD700;
+            margin-bottom: 20px;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .title:hover {
+            transform: scale(1.05);
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: #4169E1;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            border: none;
+            border-radius: 16px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            margin: 10px;
+            transform: translateY(0);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            animation: bounce 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Navigation button styles */
+        .nav-btn {
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-family: inherit;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .nav-btn.secondary {
+            background: linear-gradient(45deg, #4169E1, #87CEEB);
+            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
+        }
+
+        .nav-btn.secondary:hover {
+            box-shadow: 0 6px 20px rgba(65, 105, 225, 0.4);
+        }
+
+        /* Character Selection */
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .character-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 20px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .character-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .character-card.selected {
+            border-color: #FF6B35;
+            background: linear-gradient(45deg, rgba(255, 107, 53, 0.1), rgba(255, 215, 0, 0.1));
+            transform: scale(1.05);
+        }
+
+        .character-emoji {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .character-name {
+            font-size: 1.5rem;
+            color: #FF6B35;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .character-ability {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Player Setup */
+        .player-setup {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .player-config {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left;
+        }
+
+        .player-config h3 {
+            color: #FF6B35;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .player-config input, .player-config select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #87CEEB;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .player-config label {
+            display: block;
+            color: #4169E1;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        /* Game Board */
+        .board-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            min-height: 600px;
+        }
+
+        .board {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #90EE90, #98FB98);
+            border: 8px solid #4169E1;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .board-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #FFD700;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .game-title-board {
+            font-size: 1.2rem;
+            color: #FF6B35;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .tile {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .tile:hover {
+            transform: scale(1.1);
+        }
+
+        .tile.good {
+            background: linear-gradient(45deg, #32CD32, #90EE90);
+            color: white;
+        }
+
+        .tile.bad {
+            background: linear-gradient(45deg, #FF4500, #FF6347);
+            color: white;
+        }
+
+        .tile.super-good {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: white;
+        }
+
+        .tile.shop {
+            background: linear-gradient(45deg, #9370DB, #DDA0DD);
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        /* Player pieces */
+        .player-piece {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            border: 3px solid #fff;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        .player1 { background: linear-gradient(45deg, #FF69B4, #FFB6C1); }
+        .player2 { background: linear-gradient(45deg, #4169E1, #87CEEB); }
+        .player3 { background: linear-gradient(45deg, #32CD32, #90EE90); }
+        .player4 { background: linear-gradient(45deg, #FFD700, #FFA500); }
+
+        /* Game UI */
+        .game-ui {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+            align-items: start;
+        }
+
+        .player-info, .game-controls, .shop-info {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .current-player {
+            border: 3px solid #FF6B35;
+            background: linear-gradient(45deg, rgba(255, 107, 53, 0.1), rgba(255, 215, 0, 0.1));
+        }
+
+        .player-name {
+            color: #FF6B35;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .player-character {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .player-stats {
+            margin-bottom: 15px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .inventory {
+            margin-top: 10px;
+        }
+
+        .inventory-item {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Spinner */
+        .spinner-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 8px solid #4169E1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spinner:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(65, 105, 225, 0.4);
+        }
+
+        .spinner-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .spinner.spinning {
+            animation: spin 2s ease-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1800deg); }
+        }
+
+        /* Shop Modal */
+        .shop-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .shop-modal.active {
+            display: flex;
+        }
+
+        .shop-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 2px solid #87CEEB;
+        }
+
+        .shop-item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .shop-item-emoji {
+            font-size: 2rem;
+        }
+
+        .shop-item-details {
+            text-align: left;
+        }
+
+        .shop-item-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #FF6B35;
+        }
+
+        .shop-item-price {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .buy-btn {
+            background: linear-gradient(45deg, #32CD32, #90EE90);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.4);
+        }
+
+        .buy-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Win Screen */
+        .win-content {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .winner-announcement {
+            font-size: 3rem;
+            color: #FF6B35;
+            text-shadow: 2px 2px 0px #FFD700;
+            margin-bottom: 30px;
+            animation: celebration 2s infinite;
+        }
+
+        @keyframes celebration {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .final-standings {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .standing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .standing-item.first {
+            background: linear-gradient(45deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.3));
+            border: 2px solid #FFD700;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .board {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .board-center {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .game-logo {
+                font-size: 2rem;
+            }
+            
+            .game-title-board {
+                font-size: 1rem;
+            }
+            
+            .tile {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+            
+            .player-piece {
+                width: 30px;
+                height: 30px;
+                font-size: 1.4rem;
+            }
+            
+            .game-ui {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .character-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .board {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .board-center {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .game-logo {
+                font-size: 1.5rem;
+            }
+            
+            .game-title-board {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Start Screen -->
+        <div class="screen active" id="startScreen">
+            <h1 class="title">🐕 Pup Paradise Path 🐕</h1>
+            <p class="subtitle">A Circular Dog-Themed Board Game Adventure!</p>
+            <button class="btn" onclick="showCharacterSelect()">🎮 New Game</button>
+            <button class="btn" onclick="showRules()">📋 How to Play</button>
+            <br>
+            <button class="nav-btn secondary" onclick="window.location.href='../index.html'">🏠 All Games</button>
+        </div>
+
+        <!-- Rules Screen -->
+        <div class="screen" id="rulesScreen">
+            <h2 class="title" style="font-size: 2.5rem;">How to Play</h2>
+            <div style="text-align: left; max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.9); padding: 30px; border-radius: 16px;">
+                <h3 style="color: #FF6B35; margin-bottom: 15px;">🎯 Goal</h3>
+                <p style="margin-bottom: 20px;">Be the first to collect one Tennis Ball + one Bone + one Stuffie to trigger the endgame. Then the player with the most total toys wins!</p>
+                
+                <h3 style="color: #FF6B35; margin-bottom: 15px;">🎲 Gameplay</h3>
+                <ul style="margin-bottom: 20px; padding-left: 20px;">
+                    <li>Take turns spinning the spinner (1-6)</li>
+                    <li>Move clockwise around the 15-tile circular board</li>
+                    <li>Land on different tile types for various effects</li>
+                    <li>Collect coins and buy toys from Dog Shops</li>
+                </ul>
+
+                <h3 style="color: #FF6B35; margin-bottom: 15px;">🟢 Tile Types</h3>
+                <ul style="margin-bottom: 20px; padding-left: 20px;">
+                    <li><strong>Good (5):</strong> Earn 1 coin + spin again</li>
+                    <li><strong>Super Good (2):</strong> Earn 2 coins + spin again</li>
+                    <li><strong>Bad (5):</strong> Go back to turn start position</li>
+                    <li><strong>Dog Shop (3):</strong> Buy toys with coins</li>
+                </ul>
+
+                <h3 style="color: #FF6B35; margin-bottom: 15px;">🛍️ Shop Items</h3>
+                <ul style="margin-bottom: 20px; padding-left: 20px;">
+                    <li>🎾 Tennis Ball: 1 coin</li>
+                    <li>🦴 Bone: 2 coins</li>
+                    <li>🧸 Stuffie: 3 coins</li>
+                </ul>
+
+                <h3 style="color: #FF6B35; margin-bottom: 15px;">🐕 Dog Abilities</h3>
+                <p style="margin-bottom: 20px;">Each dog character has a special ability to help them on their journey!</p>
+            </div>
+            <button class="btn" onclick="showStartScreen()">🏠 Back to Menu</button>
+        </div>
+
+        <!-- Character Selection Screen -->
+        <div class="screen" id="characterSelectScreen">
+            <h2 class="title" style="font-size: 2.5rem;">Choose Your Pup!</h2>
+            <div class="character-grid" id="characterGrid">
+                <!-- Characters populated by JavaScript -->
+            </div>
+            <button class="btn" onclick="showPlayerSetup()">➡️ Next: Player Setup</button>
+            <button class="btn" onclick="showStartScreen()">🏠 Back to Menu</button>
+        </div>
+
+        <!-- Player Setup Screen -->
+        <div class="screen" id="playerSetupScreen">
+            <h2 class="title" style="font-size: 2.5rem;">Player Setup</h2>
+            <div class="player-setup" id="playerSetup">
+                <!-- Player configs populated by JavaScript -->
+            </div>
+            <button class="btn" onclick="startGame()">🚀 Start Game</button>
+            <button class="btn" onclick="showCharacterSelect()">⬅️ Back to Characters</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="screen" id="gameScreen">
+            <div class="game-ui">
+                <!-- Players Info -->
+                <div class="player-info" id="playersInfo">
+                    <!-- Player info cards populated by JavaScript -->
+                </div>
+
+                <!-- Game Controls -->
+                <div class="game-controls">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3 style="color: #FF6B35; margin-bottom: 10px;" id="currentPlayerTurn">Player 1's Turn</h3>
+                        <button class="nav-btn" onclick="showPlayerSetup()">🔄 New Game</button>
+                    </div>
+                    
+                    <div class="spinner-container">
+                        <div class="spinner" id="spinner" onclick="spinDice()">
+                            <div class="spinner-number" id="spinnerNumber">🎲</div>
+                        </div>
+                        <button class="btn" id="spinButton" onclick="spinDice()">🎲 Spin!</button>
+                    </div>
+                </div>
+
+                <!-- Shop/Game Info -->
+                <div class="shop-info">
+                    <h3 style="color: #FF6B35; margin-bottom: 15px;">🛍️ Dog Shop</h3>
+                    <div style="margin-bottom: 15px;">
+                        <div style="margin-bottom: 8px;">🎾 Tennis Ball: 1 coin</div>
+                        <div style="margin-bottom: 8px;">🦴 Bone: 2 coins</div>
+                        <div style="margin-bottom: 8px;">🧸 Stuffie: 3 coins</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 12px;">
+                        <strong style="color: #FF6B35;">Goal:</strong><br>
+                        First to get one of each toy triggers endgame!<br>
+                        Then most toys wins! 🏆
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Board -->
+            <div class="board-container">
+                <div class="board" id="gameBoard">
+                    <div class="board-center">
+                        <div class="game-logo">🐕</div>
+                        <div class="game-title-board">Pup Paradise Path</div>
+                    </div>
+                    <!-- Tiles and player pieces populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Modal -->
+        <div class="shop-modal" id="shopModal">
+            <div class="shop-content">
+                <h3 style="color: #FF6B35; margin-bottom: 20px; text-align: center;">🛍️ Dog Shop</h3>
+                <div id="shopItems">
+                    <!-- Shop items populated by JavaScript -->
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="closeShop()">✅ Done Shopping</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Win Screen -->
+        <div class="screen" id="winScreen">
+            <div class="win-content">
+                <div class="winner-announcement" id="winnerAnnouncement">🏆 Player Wins! 🏆</div>
+                <div class="final-standings" id="finalStandings">
+                    <!-- Final standings populated by JavaScript -->
+                </div>
+                <button class="btn" onclick="showPlayerSetup()">🔄 Play Again</button>
+                <button class="btn" onclick="showStartScreen()">🏠 Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Audio functions from Audio Explorer library
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function createTone(frequency, duration, type = 'sine', volume = 0.3) {
+            return new Promise(resolve => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+                
+                oscillator.onended = resolve;
+            });
+        }
+
+        // Standard game sounds
+        function playButtonClick() { createTone(600, 0.1, 'square'); }
+        function playSuccess() { createTone(800, 0.15, 'sine'); }
+        function playError() { 
+            createTone(400, 0.2, 'triangle');
+            setTimeout(() => createTone(350, 0.3, 'triangle'), 200);
+        }
+        function playPowerUp() {
+            createTone(523, 0.15, 'square');
+            setTimeout(() => createTone(659, 0.15, 'square'), 150);
+            setTimeout(() => createTone(784, 0.2, 'square'), 300);
+        }
+        function playVictory() {
+            createTone(523, 0.3, 'triangle');
+            setTimeout(() => createTone(659, 0.3, 'triangle'), 300);
+            setTimeout(() => createTone(784, 0.3, 'triangle'), 600);
+            setTimeout(() => createTone(1047, 0.5, 'triangle'), 900);
+        }
+
+        function initAudio() {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        // Game Data
+        const characters = [
+            {
+                id: 'bulldog',
+                name: 'Tank',
+                emoji: '🐕',
+                breed: 'Bulldog',
+                ability: 'Bad tiles only send back 2 spaces (not to turn start)',
+                description: 'Tough and resilient'
+            },
+            {
+                id: 'golden',
+                name: 'Fetch',
+                emoji: '🦮',
+                breed: 'Golden Retriever',
+                ability: 'Gets extra spin when landing on good tiles',
+                description: 'Loyal and energetic'
+            },
+            {
+                id: 'frenchie',
+                name: 'Lucky',
+                emoji: '🐶',
+                breed: 'French Bulldog',
+                ability: 'One re-roll per game',
+                description: 'Small but fortunate'
+            },
+            {
+                id: 'pitbull',
+                name: 'Brave',
+                emoji: '🐕‍🦺',
+                breed: 'Pitbull',
+                ability: 'Bad tiles only affect every other time',
+                description: 'Courageous and strong'
+            },
+            {
+                id: 'pug',
+                name: 'Sneaky',
+                emoji: '🐕‍🦺',
+                breed: 'Pug',
+                ability: 'Roll dice on bad tiles - 4,5,6 = avoid consequence',
+                description: 'Clever and mischievous'
+            }
+        ];
+
+        const shopItems = [
+            { id: 'tennis', name: 'Tennis Ball', emoji: '🎾', price: 1 },
+            { id: 'bone', name: 'Bone', emoji: '🦴', price: 2 },
+            { id: 'stuffie', name: 'Stuffie', emoji: '🧸', price: 3 }
+        ];
+
+        // Game State
+        let gameState = {
+            players: [],
+            currentPlayerIndex: 0,
+            selectedCharacters: [],
+            gamePhase: 'setup', // setup, playing, endgame, finished
+            endgameTriggered: false,
+            finalRoundPlayers: []
+        };
+
+        // Board configuration - 15 tiles in circle
+        const boardTiles = [
+            'good', 'bad', 'shop', 'good', 'super-good', 
+            'bad', 'good', 'shop', 'bad', 'good',
+            'super-good', 'bad', 'good', 'shop', 'bad'
+        ];
+
+        // Helper functions
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function showStartScreen() { showScreen('startScreen'); }
+        function showRules() { showScreen('rulesScreen'); }
+        function showCharacterSelect() { 
+            renderCharacterSelect();
+            showScreen('characterSelectScreen'); 
+        }
+        function showPlayerSetup() { 
+            renderPlayerSetup();
+            showScreen('playerSetupScreen'); 
+        }
+
+        // Character Selection
+        function renderCharacterSelect() {
+            const grid = document.getElementById('characterGrid');
+            grid.innerHTML = characters.map(char => `
+                <div class="character-card" data-character="${char.id}" onclick="selectCharacter('${char.id}')">
+                    <div class="character-emoji">${char.emoji}</div>
+                    <div class="character-name">${char.name}</div>
+                    <div style="font-size: 1.1rem; color: #4169E1; margin-bottom: 10px;">${char.breed}</div>
+                    <div class="character-ability">${char.ability}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectCharacter(characterId) {
+            // Toggle selection
+            const index = gameState.selectedCharacters.indexOf(characterId);
+            if (index === -1) {
+                if (gameState.selectedCharacters.length < 4) {
+                    gameState.selectedCharacters.push(characterId);
+                }
+            } else {
+                gameState.selectedCharacters.splice(index, 1);
+            }
+
+            // Update visual selection
+            document.querySelectorAll('.character-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            gameState.selectedCharacters.forEach(charId => {
+                const card = document.querySelector(`[data-character="${charId}"]`);
+                if (card) card.classList.add('selected');
+            });
+
+            playButtonClick();
+        }
+
+        // Player Setup
+        function renderPlayerSetup() {
+            const container = document.getElementById('playerSetup');
+            const numPlayers = Math.min(gameState.selectedCharacters.length, 4);
+            
+            container.innerHTML = '';
+            for (let i = 0; i < numPlayers; i++) {
+                const charId = gameState.selectedCharacters[i];
+                const character = characters.find(c => c.id === charId);
+                
+                container.innerHTML += `
+                    <div class="player-config">
+                        <h3>Player ${i + 1}</h3>
+                        <label>Player Name:</label>
+                        <input type="text" id="playerName${i}" value="Player ${i + 1}" maxlength="15">
+                        <label>Character:</label>
+                        <select id="playerChar${i}">
+                            ${gameState.selectedCharacters.map(cId => {
+                                const c = characters.find(char => char.id === cId);
+                                return `<option value="${cId}" ${cId === charId ? 'selected' : ''}>${c.name} (${c.breed})</option>`;
+                            }).join('')}
+                        </select>
+                        <div style="margin-top: 10px; font-size: 2rem; text-align: center;">
+                            ${character ? character.emoji : '🐕'}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Game Initialization
+        function startGame() {
+            initAudio();
+            
+            // Create players from setup
+            gameState.players = [];
+            const numPlayers = Math.min(gameState.selectedCharacters.length, 4);
+            
+            for (let i = 0; i < numPlayers; i++) {
+                const nameInput = document.getElementById(`playerName${i}`);
+                const charSelect = document.getElementById(`playerChar${i}`);
+                const character = characters.find(c => c.id === charSelect.value);
+                
+                gameState.players.push({
+                    id: i,
+                    name: nameInput.value.trim() || `Player ${i + 1}`,
+                    character: character,
+                    position: 0,
+                    turnStartPosition: 0,
+                    coins: 2, // Start with 2 coins
+                    inventory: { tennis: 0, bone: 0, stuffie: 0 },
+                    specialUsed: false, // For French Bulldog re-roll
+                    badTileCounter: 0 // For Pitbull ability
+                });
+            }
+
+            gameState.currentPlayerIndex = 0;
+            gameState.gamePhase = 'playing';
+            gameState.endgameTriggered = false;
+            
+            renderGameBoard();
+            updateGameUI();
+            showScreen('gameScreen');
+            playSuccess();
+        }
+
+        // Board Rendering
+        function renderGameBoard() {
+            const board = document.getElementById('gameBoard');
+            
+            // Clear existing tiles and pieces
+            const existingTiles = board.querySelectorAll('.tile, .player-piece');
+            existingTiles.forEach(el => el.remove());
+
+            // Create tiles in circle
+            boardTiles.forEach((tileType, index) => {
+                const tile = document.createElement('div');
+                tile.className = `tile ${tileType}`;
+                tile.dataset.position = index;
+                
+                // Position tiles in circle
+                const angle = (index * 360 / boardTiles.length) - 90; // Start at top
+                const radius = 180; // Distance from center
+                const x = 250 + radius * Math.cos(angle * Math.PI / 180) - 30; // Center and offset for tile size
+                const y = 250 + radius * Math.sin(angle * Math.PI / 180) - 30;
+                
+                tile.style.left = x + 'px';
+                tile.style.top = y + 'px';
+                
+                // Tile content
+                if (tileType === 'good') tile.textContent = '💚';
+                else if (tileType === 'bad') tile.textContent = '💔';
+                else if (tileType === 'super-good') tile.textContent = '⭐';
+                else if (tileType === 'shop') tile.textContent = '🛍️';
+                
+                board.appendChild(tile);
+            });
+
+            // Create player pieces
+            gameState.players.forEach((player, index) => {
+                const piece = document.createElement('div');
+                piece.className = `player-piece player${index + 1}`;
+                piece.dataset.playerId = player.id;
+                piece.textContent = player.character.emoji;
+                
+                // Position at start (tile 0)
+                positionPlayerPiece(piece, 0, index);
+                
+                board.appendChild(piece);
+            });
+        }
+
+        function positionPlayerPiece(piece, tileIndex, playerOffset = 0) {
+            const angle = (tileIndex * 360 / boardTiles.length) - 90;
+            const radius = 180;
+            
+            // Offset multiple players on same tile
+            const offsetAngle = (playerOffset - 1.5) * 8; // Spread players around tile
+            const adjustedAngle = angle + offsetAngle;
+            
+            const x = 250 + radius * Math.cos(adjustedAngle * Math.PI / 180) - 20;
+            const y = 250 + radius * Math.sin(adjustedAngle * Math.PI / 180) - 20;
+            
+            piece.style.left = x + 'px';
+            piece.style.top = y + 'px';
+        }
+
+        // Game UI Updates
+        function updateGameUI() {
+            // Update current player indicator
+            document.getElementById('currentPlayerTurn').textContent = 
+                `${gameState.players[gameState.currentPlayerIndex].name}'s Turn`;
+
+            // Update players info
+            const playersInfo = document.getElementById('playersInfo');
+            playersInfo.innerHTML = gameState.players.map((player, index) => {
+                const isCurrentPlayer = index === gameState.currentPlayerIndex;
+                const hasWinCondition = player.inventory.tennis > 0 && player.inventory.bone > 0 && player.inventory.stuffie > 0;
+                const totalToys = player.inventory.tennis + player.inventory.bone + player.inventory.stuffie;
+                
+                return `
+                    <div class="player-info ${isCurrentPlayer ? 'current-player' : ''}" style="margin-bottom: 15px;">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-character">${player.character.emoji} ${player.character.name}</div>
+                        <div class="player-stats">
+                            <div class="stat-row">
+                                <span>💰 Coins:</span>
+                                <span>${player.coins}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span>🎯 Total Toys:</span>
+                                <span>${totalToys}</span>
+                            </div>
+                            ${hasWinCondition ? '<div style="color: #32CD32; font-weight: bold;">✅ Win Condition Met!</div>' : ''}
+                        </div>
+                        <div class="inventory">
+                            <div class="inventory-item">🎾 ${player.inventory.tennis}</div>
+                            <div class="inventory-item">🦴 ${player.inventory.bone}</div>
+                            <div class="inventory-item">🧸 ${player.inventory.stuffie}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Spinner Logic
+        function spinDice() {
+            if (document.getElementById('spinner').classList.contains('spinning')) return;
+            
+            initAudio();
+            playButtonClick();
+            
+            const spinner = document.getElementById('spinner');
+            const spinnerNumber = document.getElementById('spinnerNumber');
+            const spinButton = document.getElementById('spinButton');
+            
+            spinner.classList.add('spinning');
+            spinButton.disabled = true;
+            spinButton.textContent = 'Spinning...';
+            
+            // Generate random number 1-6
+            const result = Math.floor(Math.random() * 6) + 1;
+            
+            setTimeout(() => {
+                spinner.classList.remove('spinning');
+                spinnerNumber.textContent = result;
+                spinButton.disabled = false;
+                spinButton.textContent = '🎲 Spin!';
+                
+                // Move player
+                movePlayer(result);
+            }, 2000);
+        }
+
+        // Player Movement
+        function movePlayer(spaces) {
+            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+            currentPlayer.turnStartPosition = currentPlayer.position;
+            
+            // Animate movement
+            animatePlayerMovement(currentPlayer, spaces);
+        }
+
+        function animatePlayerMovement(player, spaces) {
+            let moved = 0;
+            const piece = document.querySelector(`[data-player-id="${player.id}"]`);
+            
+            const moveInterval = setInterval(() => {
+                moved++;
+                player.position = (player.position + 1) % boardTiles.length;
+                
+                // Update piece position
+                const playerOffset = gameState.players.findIndex(p => p.id === player.id);
+                positionPlayerPiece(piece, player.position, playerOffset);
+                
+                // Play movement sound
+                createTone(300 + moved * 50, 0.1, 'sine', 0.2);
+                
+                if (moved >= spaces) {
+                    clearInterval(moveInterval);
+                    handleTileLanding(player);
+                }
+            }, 300);
+        }
+
+        // Tile Effects
+        function handleTileLanding(player) {
+            const tileType = boardTiles[player.position];
+            const playerIndex = gameState.players.findIndex(p => p.id === player.id);
+            
+            setTimeout(() => {
+                switch (tileType) {
+                    case 'good':
+                        handleGoodTile(player);
+                        break;
+                    case 'super-good':
+                        handleSuperGoodTile(player);
+                        break;
+                    case 'bad':
+                        handleBadTile(player);
+                        break;
+                    case 'shop':
+                        handleShopTile(player);
+                        break;
+                }
+                
+                updateGameUI();
+                
+                // Check win condition after tile effect
+                if (checkEndgameCondition()) {
+                    return; // Don't continue turn if game ends
+                }
+                
+                // Continue turn if player gets another spin
+                if (!player.getAnotherSpin) {
+                    nextTurn();
+                } else {
+                    player.getAnotherSpin = false;
+                }
+            }, 500);
+        }
+
+        function handleGoodTile(player) {
+            player.coins += 1;
+            playSuccess();
+            
+            // Golden Retriever special ability
+            if (player.character.id === 'golden') {
+                player.getAnotherSpin = true;
+                showMessage(`${player.name} earned 1 coin + bonus spin from ${player.character.name}'s ability!`);
+            } else {
+                player.getAnotherSpin = true;
+                showMessage(`${player.name} earned 1 coin and gets another spin!`);
+            }
+        }
+
+        function handleSuperGoodTile(player) {
+            player.coins += 2;
+            player.getAnotherSpin = true;
+            playPowerUp();
+            showMessage(`${player.name} earned 2 coins and gets another spin!`);
+        }
+
+        function handleBadTile(player) {
+            let shouldApplyEffect = true;
+            
+            // Pitbull special ability - only affected every other time
+            if (player.character.id === 'pitbull') {
+                player.badTileCounter++;
+                if (player.badTileCounter % 2 === 0) {
+                    shouldApplyEffect = false;
+                    showMessage(`${player.name} avoided the bad tile effect with ${player.character.name}'s bravery!`);
+                }
+            }
+            
+            // Pug special ability - roll to avoid
+            if (player.character.id === 'pug' && shouldApplyEffect) {
+                const avoidRoll = Math.floor(Math.random() * 6) + 1;
+                if (avoidRoll >= 4) {
+                    shouldApplyEffect = false;
+                    showMessage(`${player.name} sneakily avoided the bad tile (rolled ${avoidRoll})!`);
+                } else {
+                    showMessage(`${player.name} couldn't sneak away (rolled ${avoidRoll})`);
+                }
+            }
+            
+            if (shouldApplyEffect) {
+                playError();
+                
+                // Bulldog special ability - only go back 2 spaces
+                if (player.character.id === 'bulldog') {
+                    const newPosition = Math.max(0, player.position - 2);
+                    if (newPosition !== player.position) {
+                        player.position = newPosition;
+                        const piece = document.querySelector(`[data-player-id="${player.id}"]`);
+                        const playerOffset = gameState.players.findIndex(p => p.id === player.id);
+                        positionPlayerPiece(piece, player.position, playerOffset);
+                    }
+                    showMessage(`${player.name} only went back 2 spaces thanks to ${player.character.name}'s toughness!`);
+                } else {
+                    // Normal bad tile effect - go back to turn start
+                    player.position = player.turnStartPosition;
+                    const piece = document.querySelector(`[data-player-id="${player.id}"]`);
+                    const playerOffset = gameState.players.findIndex(p => p.id === player.id);
+                    positionPlayerPiece(piece, player.position, playerOffset);
+                    showMessage(`${player.name} went back to the start of their turn!`);
+                }
+            }
+        }
+
+        function handleShopTile(player) {
+            playSuccess();
+            showMessage(`${player.name} found a Dog Shop!`);
+            openShop(player);
+        }
+
+        // Shop System
+        function openShop(player) {
+            const modal = document.getElementById('shopModal');
+            const shopItemsContainer = document.getElementById('shopItems');
+            
+            shopItemsContainer.innerHTML = shopItems.map(item => {
+                const canAfford = player.coins >= item.price;
+                return `
+                    <div class="shop-item">
+                        <div class="shop-item-info">
+                            <div class="shop-item-emoji">${item.emoji}</div>
+                            <div class="shop-item-details">
+                                <div class="shop-item-name">${item.name}</div>
+                                <div class="shop-item-price">${item.price} coin${item.price !== 1 ? 's' : ''}</div>
+                            </div>
+                        </div>
+                        <button class="buy-btn" onclick="buyItem('${item.id}', ${item.price})" ${!canAfford ? 'disabled' : ''}>
+                            ${canAfford ? 'Buy' : 'Too Expensive'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            
+            modal.classList.add('active');
+        }
+
+        function buyItem(itemId, price) {
+            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+            
+            if (currentPlayer.coins >= price) {
+                currentPlayer.coins -= price;
+                currentPlayer.inventory[itemId]++;
+                
+                playSuccess();
+                updateGameUI();
+                
+                // Update shop display
+                openShop(currentPlayer);
+                
+                showMessage(`${currentPlayer.name} bought a ${shopItems.find(i => i.id === itemId).name}!`);
+            }
+        }
+
+        function closeShop() {
+            document.getElementById('shopModal').classList.remove('active');
+        }
+
+        // Turn Management
+        function nextTurn() {
+            gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+            
+            // Check if we're in endgame and this was the last player's final turn
+            if (gameState.gamePhase === 'endgame') {
+                const playersLeft = gameState.finalRoundPlayers.filter(p => !p.hasPlayedFinalTurn);
+                if (playersLeft.length === 0) {
+                    endGame();
+                    return;
+                }
+            }
+            
+            updateGameUI();
+        }
+
+        // Win Conditions
+        function checkEndgameCondition() {
+            if (gameState.endgameTriggered) return false;
+            
+            // Check if any player has one of each toy type
+            const triggeringPlayer = gameState.players.find(player => 
+                player.inventory.tennis > 0 && player.inventory.bone > 0 && player.inventory.stuffie > 0
+            );
+            
+            if (triggeringPlayer) {
+                gameState.endgameTriggered = true;
+                gameState.gamePhase = 'endgame';
+                
+                // Mark all other players for final turn
+                gameState.finalRoundPlayers = gameState.players.map(player => ({
+                    ...player,
+                    hasPlayedFinalTurn: player.id === triggeringPlayer.id
+                }));
+                
+                showMessage(`${triggeringPlayer.name} has one of each toy! Final round begins!`);
+                playVictory();
+                
+                return true;
+            }
+            
+            return false;
+        }
+
+        function endGame() {
+            // Calculate winner based on total toys
+            const playersWithToys = gameState.players.map(player => ({
+                ...player,
+                totalToys: player.inventory.tennis + player.inventory.bone + player.inventory.stuffie
+            })).sort((a, b) => b.totalToys - a.totalToys);
+            
+            const winner = playersWithToys[0];
+            
+            // Render win screen
+            document.getElementById('winnerAnnouncement').textContent = `🏆 ${winner.name} Wins! 🏆`;
+            
+            const standingsHTML = playersWithToys.map((player, index) => `
+                <div class="standing-item ${index === 0 ? 'first' : ''}">
+                    <div>
+                        <strong>${index + 1}. ${player.name}</strong>
+                        <div style="font-size: 0.9rem; color: #666;">${player.character.emoji} ${player.character.name}</div>
+                    </div>
+                    <div>
+                        <strong>${player.totalToys} toys</strong>
+                        <div style="font-size: 0.8rem;">🎾${player.inventory.tennis} 🦴${player.inventory.bone} 🧸${player.inventory.stuffie}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('finalStandings').innerHTML = standingsHTML;
+            
+            playVictory();
+            showScreen('winScreen');
+        }
+
+        // Message System
+        function showMessage(message) {
+            // Simple alert for now - could be enhanced with custom modal
+            setTimeout(() => alert(message), 100);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize audio on first click
+            document.addEventListener('click', initAudio, { once: true });
+            
+            // Add click sounds to buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.btn, .nav-btn, .buy-btn')) {
+                    playButtonClick();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
