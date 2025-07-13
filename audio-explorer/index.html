@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Explorer - Web Audio API Playground</title>
+    <style>
+        /* Import Fredoka Font from Google Fonts - will cache for offline use */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        
+        /* Enhanced font fallback stack for offline support */
+        .font-fredoka {
+            font-family: 'Fredoka', 'Comic Sans MS', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', 'Comic Sans MS', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            color: #FF6B35;
+            text-shadow: 3px 3px 0px #FFD700;
+            margin-bottom: 15px;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .title:hover {
+            transform: scale(1.05);
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: #4169E1;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        /* Navigation button styles */
+        .nav-btn {
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-family: inherit;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .nav-btn.secondary {
+            background: linear-gradient(45deg, #4169E1, #87CEEB);
+            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
+        }
+
+        .nav-btn.secondary:hover {
+            box-shadow: 0 6px 20px rgba(65, 105, 225, 0.4);
+        }
+
+        .audio-sections {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h3 {
+            color: #FF6B35;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sound-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .sound-button {
+            background: linear-gradient(45deg, #4169E1, #87CEEB);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sound-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(65, 105, 225, 0.4);
+        }
+
+        .sound-button:active {
+            transform: translateY(0);
+            animation: ripple 0.3s ease;
+        }
+
+        .sound-button.playing {
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
+        .custom-controls {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            color: #4169E1;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #87CEEB;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .play-custom-btn {
+            background: linear-gradient(45deg, #32CD32, #98FB98);
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            color: white;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(50, 205, 50, 0.3);
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .play-custom-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            overflow-x: auto;
+            border-left: 4px solid #FF6B35;
+        }
+
+        .code-display pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .value-display {
+            display: inline-block;
+            background: rgba(255, 107, 53, 0.1);
+            color: #FF6B35;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .info-box {
+            background: linear-gradient(45deg, rgba(255, 107, 53, 0.1), rgba(255, 215, 0, 0.1));
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .info-box h4 {
+            color: #FF6B35;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .info-box p {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .sound-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .sound-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎵 Audio Explorer 🎵</h1>
+            <p class="subtitle">Web Audio API Playground & Game Sound Library</p>
+            <p class="description">
+                Explore the power of Web Audio API! Click the preset sounds below to hear common game audio effects, 
+                then experiment with the custom controls to create your own sounds. Perfect for learning and prototyping game audio.
+            </p>
+            <button class="nav-btn secondary" onclick="window.location.href='../index.html'">🏠 All Games</button>
+        </div>
+
+        <div class="audio-sections">
+            <!-- Game Sound Effects -->
+            <div class="section">
+                <h3>🎮 Game Sound Effects</h3>
+                <div class="sound-grid" id="gameEffects">
+                    <!-- Populated by JavaScript -->
+                </div>
+                <div class="info-box">
+                    <h4>Game Sound Effects</h4>
+                    <p>These are common sounds used in games. Each sound is generated using the Web Audio API with specific frequency, duration, and waveform combinations. Copy the code snippets to use these sounds in your own games!</p>
+                </div>
+            </div>
+
+            <!-- UI Sound Effects -->
+            <div class="section">
+                <h3>🖱️ UI Sound Effects</h3>
+                <div class="sound-grid" id="uiEffects">
+                    <!-- Populated by JavaScript -->
+                </div>
+                <div class="info-box">
+                    <h4>User Interface Sounds</h4>
+                    <p>Essential sounds for user interfaces - button clicks, navigation, notifications, and feedback sounds. These help provide immediate audio feedback to user actions.</p>
+                </div>
+            </div>
+
+            <!-- Musical Elements -->
+            <div class="section">
+                <h3>🎼 Musical Elements</h3>
+                <div class="sound-grid" id="musicalElements">
+                    <!-- Populated by JavaScript -->
+                </div>
+                <div class="info-box">
+                    <h4>Musical Elements</h4>
+                    <p>Basic musical sounds and scales that can be used for game music, victory fanfares, or melodic sound effects. Great for adding musical flair to your games.</p>
+                </div>
+            </div>
+
+            <!-- Custom Sound Builder -->
+            <div class="section">
+                <h3>🎛️ Custom Sound Builder</h3>
+                <div class="custom-controls">
+                    <div class="control-group">
+                        <label for="frequency">Frequency: <span class="value-display" id="frequencyDisplay">440</span> Hz</label>
+                        <input type="range" id="frequency" min="50" max="2000" value="440" step="1">
+                    </div>
+                    <div class="control-group">
+                        <label for="duration">Duration: <span class="value-display" id="durationDisplay">0.3</span> seconds</label>
+                        <input type="range" id="duration" min="0.1" max="3" value="0.3" step="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label for="waveform">Waveform:</label>
+                        <select id="waveform">
+                            <option value="sine">Sine (Smooth)</option>
+                            <option value="square">Square (Retro)</option>
+                            <option value="triangle">Triangle (Mellow)</option>
+                            <option value="sawtooth">Sawtooth (Buzzy)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="volume">Volume: <span class="value-display" id="volumeDisplay">0.3</span></label>
+                        <input type="range" id="volume" min="0.1" max="1" value="0.3" step="0.1">
+                    </div>
+                    <button class="play-custom-btn" onclick="playCustomSound()">🎵 Play Custom Sound</button>
+                </div>
+                <div class="code-display">
+                    <pre id="codeOutput">// Your custom sound code will appear here</pre>
+                </div>
+                <div class="info-box">
+                    <h4>Custom Sound Builder</h4>
+                    <p>Experiment with different parameters to create your own sounds! Adjust frequency (pitch), duration (length), waveform (timbre), and volume. The code output shows you exactly how to recreate this sound in your games.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Web Audio API Context
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Initialize audio context on first user interaction
+        function initAudio() {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        // Core sound creation function
+        function createTone(frequency, duration, type = 'sine', volume = 0.3) {
+            return new Promise(resolve => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+                
+                oscillator.onended = resolve;
+            });
+        }
+
+        // Advanced sound creation with envelope
+        function createAdvancedTone(frequency, duration, type = 'sine', volume = 0.3, attack = 0.01, decay = 0.1, sustain = 0.7, release = 0.2) {
+            return new Promise(resolve => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                oscillator.type = type;
+                
+                // ADSR Envelope
+                const attackTime = audioContext.currentTime + attack;
+                const decayTime = attackTime + decay;
+                const releaseStart = audioContext.currentTime + duration - release;
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(volume, attackTime);
+                gainNode.gain.linearRampToValueAtTime(volume * sustain, decayTime);
+                gainNode.gain.setValueAtTime(volume * sustain, releaseStart);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+                
+                oscillator.onended = resolve;
+            });
+        }
+
+        // Game Sound Effects Library
+        const gameEffects = [
+            {
+                name: "🎯 Hit Target",
+                description: "Perfect for hitting targets or scoring points",
+                code: "createTone(800, 0.15, 'square')",
+                play: () => createTone(800, 0.15, 'square')
+            },
+            {
+                name: "⭐ Power Up",
+                description: "Ascending melody for collecting power-ups",
+                code: "playMelody([523, 659, 784], 0.15, 'square')",
+                play: async () => {
+                    await createTone(523, 0.15, 'square');
+                    await createTone(659, 0.15, 'square');
+                    await createTone(784, 0.2, 'square');
+                }
+            },
+            {
+                name: "💥 Explosion",
+                description: "Dramatic explosion or impact sound",
+                code: "createAdvancedTone(80, 0.8, 'sawtooth', 0.5, 0.01, 0.1, 0.3, 0.6)",
+                play: () => createAdvancedTone(80, 0.8, 'sawtooth', 0.5, 0.01, 0.1, 0.3, 0.6)
+            },
+            {
+                name: "🌟 Victory",
+                description: "Triumphant victory fanfare",
+                code: "playMelody([523, 659, 784, 1047], 0.3, 'triangle')",
+                play: async () => {
+                    await createTone(523, 0.3, 'triangle');
+                    await createTone(659, 0.3, 'triangle');
+                    await createTone(784, 0.3, 'triangle');
+                    await createTone(1047, 0.5, 'triangle');
+                }
+            },
+            {
+                name: "❌ Fail/Error",
+                description: "Gentle failure or mismatch sound",
+                code: "playMelody([400, 350], 0.2, 'triangle')",
+                play: async () => {
+                    await createTone(400, 0.2, 'triangle');
+                    await createTone(350, 0.3, 'triangle');
+                }
+            },
+            {
+                name: "🚀 Laser Shoot",
+                description: "Sci-fi laser or shooting sound",
+                code: "createAdvancedTone(1200, 0.2, 'square', 0.4, 0.01, 0.05, 0.8, 0.1)",
+                play: () => createAdvancedTone(1200, 0.2, 'square', 0.4, 0.01, 0.05, 0.8, 0.1)
+            },
+            {
+                name: "🛡️ Shield Block",
+                description: "Blocking or deflecting attacks",
+                code: "createTone(300, 0.1, 'triangle')",
+                play: () => createTone(300, 0.1, 'triangle')
+            },
+            {
+                name: "⚡ Electric Zap",
+                description: "Electric shock or energy discharge",
+                code: "createAdvancedTone(1500, 0.1, 'sawtooth', 0.6, 0.001, 0.02, 0.5, 0.07)",
+                play: () => createAdvancedTone(1500, 0.1, 'sawtooth', 0.6, 0.001, 0.02, 0.5, 0.07)
+            }
+        ];
+
+        // UI Sound Effects Library
+        const uiEffects = [
+            {
+                name: "👆 Button Click",
+                description: "Standard button press feedback",
+                code: "createTone(600, 0.1, 'square')",
+                play: () => createTone(600, 0.1, 'square')
+            },
+            {
+                name: "✅ Confirm",
+                description: "Confirmation or success action",
+                code: "createTone(800, 0.15, 'sine')",
+                play: () => createTone(800, 0.15, 'sine')
+            },
+            {
+                name: "🔔 Notification",
+                description: "Gentle notification or alert",
+                code: "createTone(523, 0.3, 'sine')",
+                play: () => createTone(523, 0.3, 'sine')
+            },
+            {
+                name: "🔄 Transition",
+                description: "Smooth page or screen transition",
+                code: "playMelody([440, 554], 0.15, 'sine')",
+                play: async () => {
+                    await createTone(440, 0.15, 'sine');
+                    await createTone(554, 0.15, 'sine');
+                }
+            },
+            {
+                name: "⚠️ Warning",
+                description: "Warning or error alert",
+                code: "createTone(220, 0.4, 'triangle')",
+                play: () => createTone(220, 0.4, 'triangle')
+            },
+            {
+                name: "📂 Menu Open",
+                description: "Opening menus or dropdowns",
+                code: "playMelody([300, 400, 500], 0.1, 'sine')",
+                play: async () => {
+                    await createTone(300, 0.1, 'sine');
+                    await createTone(400, 0.1, 'sine');
+                    await createTone(500, 0.12, 'sine');
+                }
+            },
+            {
+                name: "💨 Whoosh",
+                description: "Quick swipe or movement sound",
+                code: "createAdvancedTone(800, 0.2, 'sawtooth', 0.3, 0.01, 0.05, 0.6, 0.1)",
+                play: () => createAdvancedTone(800, 0.2, 'sawtooth', 0.3, 0.01, 0.05, 0.6, 0.1)
+            },
+            {
+                name: "🎊 Celebrate",
+                description: "Small celebration or achievement",
+                code: "playMelody([659, 784, 880, 1047], 0.12, 'triangle')",
+                play: async () => {
+                    await createTone(659, 0.12, 'triangle');
+                    await createTone(784, 0.12, 'triangle');
+                    await createTone(880, 0.12, 'triangle');
+                    await createTone(1047, 0.15, 'triangle');
+                }
+            }
+        ];
+
+        // Musical Elements Library
+        const musicalElements = [
+            {
+                name: "🎼 C Major Scale",
+                description: "Classic do-re-mi-fa-so-la-ti-do scale",
+                code: "playMelody([261, 293, 329, 349, 392, 440, 493, 523], 0.3, 'sine')",
+                play: async () => {
+                    const notes = [261, 293, 329, 349, 392, 440, 493, 523];
+                    for (const note of notes) {
+                        await createTone(note, 0.3, 'sine');
+                    }
+                }
+            },
+            {
+                name: "🎹 Major Chord",
+                description: "Happy, bright C major chord",
+                code: "playChord([261, 329, 392], 1.0, 'sine')",
+                play: () => {
+                    createTone(261, 1.0, 'sine', 0.2);
+                    createTone(329, 1.0, 'sine', 0.2);
+                    createTone(392, 1.0, 'sine', 0.2);
+                }
+            },
+            {
+                name: "🎵 Arpeggio Up",
+                description: "Upward flowing musical phrase",
+                code: "playMelody([261, 329, 392, 523], 0.2, 'triangle')",
+                play: async () => {
+                    await createTone(261, 0.2, 'triangle');
+                    await createTone(329, 0.2, 'triangle');
+                    await createTone(392, 0.2, 'triangle');
+                    await createTone(523, 0.3, 'triangle');
+                }
+            },
+            {
+                name: "🎶 Arpeggio Down",
+                description: "Downward flowing musical phrase",
+                code: "playMelody([523, 392, 329, 261], 0.2, 'triangle')",
+                play: async () => {
+                    await createTone(523, 0.2, 'triangle');
+                    await createTone(392, 0.2, 'triangle');
+                    await createTone(329, 0.2, 'triangle');
+                    await createTone(261, 0.3, 'triangle');
+                }
+            },
+            {
+                name: "🔔 Bell Toll",
+                description: "Rich, resonant bell sound",
+                code: "createAdvancedTone(523, 2.0, 'sine', 0.4, 0.01, 0.3, 0.6, 1.5)",
+                play: () => createAdvancedTone(523, 2.0, 'sine', 0.4, 0.01, 0.3, 0.6, 1.5)
+            },
+            {
+                name: "🎺 Fanfare",
+                description: "Royal trumpet fanfare",
+                code: "playMelody([523, 523, 659, 523, 784, 659], 0.4, 'square')",
+                play: async () => {
+                    await createTone(523, 0.4, 'square');
+                    await createTone(523, 0.4, 'square');
+                    await createTone(659, 0.4, 'square');
+                    await createTone(523, 0.4, 'square');
+                    await createTone(784, 0.4, 'square');
+                    await createTone(659, 0.6, 'square');
+                }
+            }
+        ];
+
+        // Create sound buttons
+        function createSoundButton(sound) {
+            const button = document.createElement('button');
+            button.className = 'sound-button';
+            button.innerHTML = `
+                <div style="font-size: 1.1rem; margin-bottom: 5px;">${sound.name}</div>
+                <div style="font-size: 0.85rem; opacity: 0.9;">${sound.description}</div>
+            `;
+            
+            button.addEventListener('click', async () => {
+                initAudio();
+                button.classList.add('playing');
+                
+                try {
+                    await sound.play();
+                    // Show code in console
+                    console.log(`🎵 Sound: ${sound.name}`);
+                    console.log(`Code: ${sound.code}`);
+                } catch (error) {
+                    console.error('Error playing sound:', error);
+                } finally {
+                    button.classList.remove('playing');
+                }
+            });
+            
+            return button;
+        }
+
+        // Populate sound sections
+        function populateSounds() {
+            const gameEffectsContainer = document.getElementById('gameEffects');
+            const uiEffectsContainer = document.getElementById('uiEffects');
+            const musicalElementsContainer = document.getElementById('musicalElements');
+
+            gameEffects.forEach(sound => {
+                gameEffectsContainer.appendChild(createSoundButton(sound));
+            });
+
+            uiEffects.forEach(sound => {
+                uiEffectsContainer.appendChild(createSoundButton(sound));
+            });
+
+            musicalElements.forEach(sound => {
+                musicalElementsContainer.appendChild(createSoundButton(sound));
+            });
+        }
+
+        // Custom sound controls
+        function updateCustomControls() {
+            const frequency = document.getElementById('frequency');
+            const duration = document.getElementById('duration');
+            const waveform = document.getElementById('waveform');
+            const volume = document.getElementById('volume');
+
+            const frequencyDisplay = document.getElementById('frequencyDisplay');
+            const durationDisplay = document.getElementById('durationDisplay');
+            const volumeDisplay = document.getElementById('volumeDisplay');
+            const codeOutput = document.getElementById('codeOutput');
+
+            function updateCode() {
+                const freq = frequency.value;
+                const dur = duration.value;
+                const wave = waveform.value;
+                const vol = volume.value;
+
+                const code = `// Custom sound with your settings
+function playCustomSound() {
+    createTone(${freq}, ${dur}, '${wave}', ${vol});
+}
+
+// Core sound function (copy this to your game)
+function createTone(frequency, duration, type = 'sine', volume = 0.3) {
+    return new Promise(resolve => {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.type = type;
+        
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+        
+        oscillator.onended = resolve;
+    });
+}`;
+                
+                codeOutput.textContent = code;
+            }
+
+            frequency.addEventListener('input', () => {
+                frequencyDisplay.textContent = frequency.value;
+                updateCode();
+            });
+
+            duration.addEventListener('input', () => {
+                durationDisplay.textContent = duration.value;
+                updateCode();
+            });
+
+            waveform.addEventListener('change', updateCode);
+
+            volume.addEventListener('input', () => {
+                volumeDisplay.textContent = volume.value;
+                updateCode();
+            });
+
+            // Initial code display
+            updateCode();
+        }
+
+        // Play custom sound
+        function playCustomSound() {
+            initAudio();
+            
+            const frequency = parseInt(document.getElementById('frequency').value);
+            const duration = parseFloat(document.getElementById('duration').value);
+            const waveform = document.getElementById('waveform').value;
+            const volume = parseFloat(document.getElementById('volume').value);
+
+            createTone(frequency, duration, waveform, volume);
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            populateSounds();
+            updateCustomControls();
+            
+            // Initialize audio on first click
+            document.addEventListener('click', initAudio, { once: true });
+        });
+
+        // Add click sound to nav buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.nav-btn')) {
+                initAudio();
+                createTone(600, 0.1, 'square', 0.2);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # 🎮 Game Collection
 
-A curated collection of fun, interactive games built with vanilla HTML, CSS, and JavaScript. Perfect for families, kids, and anyone who loves engaging gameplay!
+A curated collection of fun, interactive games built with vanilla HTML, CSS, and JavaScript. Perfect for families, kids, developers, and anyone who loves engaging gameplay!
 
 ## 🌟 Featured Games
 
@@ -27,6 +27,34 @@ A thrilling 2-player Sonic-themed memory card matching game featuring beloved ch
 
 [🚀 Play Chili Dog Match](chili-dog-match/index.html)
 
+### 🎵 Audio Explorer - Web Audio API Playground
+**Status: ✅ Available**
+
+An interactive Web Audio API playground and comprehensive game sound library for developers and audio enthusiasts!
+
+**Key Features:**
+- 🔊 **24+ Preset Sound Effects** - Game effects, UI sounds, and musical elements
+- 🎛️ **Custom Sound Builder** - Real-time parameter adjustment with live preview
+- 💻 **Code Generation** - Copy-paste ready JavaScript snippets
+- 📚 **Educational Resource** - Learn Web Audio API through interactive exploration
+- 🎮 **Developer Tool** - Standardized sound library for game development
+- 📱 **Responsive Design** - Works perfectly on all devices
+- 🎯 **Three Sound Categories** - Organized for easy browsing and selection
+
+**Sound Categories:**
+1. **Game Effects**: Hit targets, power-ups, explosions, victory fanfares, failures, lasers, shields, electric zaps
+2. **UI Effects**: Button clicks, confirmations, notifications, transitions, warnings, menu sounds, celebrations
+3. **Musical Elements**: Scales, chords, arpeggios, bells, fanfares
+
+**How to Use:**
+1. Explore preset sounds by clicking any sound button
+2. Check browser console for generated code snippets
+3. Use Custom Sound Builder to experiment with parameters
+4. Copy generated code into your own projects
+5. Maintain audio consistency across game projects
+
+[🎵 Explore Audio Library](audio-explorer/index.html)
+
 ---
 
 ## 🚀 Getting Started
@@ -41,6 +69,9 @@ You can also run individual games directly:
 ```bash
 # For Chili Dog Match
 open chili-dog-match/index.html
+
+# For Audio Explorer
+open audio-explorer/index.html
 ```
 
 ### Requirements
@@ -55,9 +86,12 @@ games/
 ├── index.html                 # Main game portal/launcher
 ├── README.md                 # This file
 ├── CLAUDE.md                 # Development guidance
-└── chili-dog-match/          # Sonic memory game
-    ├── index.html           # Complete game (HTML + CSS + JS)
-    └── README.md            # Game-specific documentation
+├── chili-dog-match/          # Sonic memory game
+│   ├── index.html           # Complete game (HTML + CSS + JS)
+│   └── README.md            # Game-specific documentation
+└── audio-explorer/           # Web Audio API playground
+    ├── index.html           # Complete audio tool (HTML + CSS + JS)
+    └── README.md            # Tool-specific documentation
 ```
 
 ## 🎯 Coming Soon
@@ -84,7 +118,7 @@ Relaxing color-matching puzzles with beautiful gradients and meditative gameplay
 - **Accessibility Focused** - Keyboard navigation and screen reader support
 - **Mobile-First Design** - Touch-friendly interfaces
 - **Local Storage Integration** - Persistent game data and settings
-- **Web Audio API** - Dynamic sound generation
+- **Web Audio API** - Dynamic sound generation with standardized library
 - **CSS Animations** - Smooth, hardware-accelerated effects
 - **Modular Architecture** - Easy to add new games
 
@@ -128,6 +162,7 @@ This is a personal project, but feedback and suggestions are welcome! Feel free 
 - Each game includes its own README with specific details
 - Consistent design patterns across all games
 - Modular CSS and JavaScript architecture
+- Standardized sound library via Audio Explorer
 - See `CLAUDE.md` for development guidelines
 
 ### Adding New Games

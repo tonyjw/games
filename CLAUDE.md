@@ -130,13 +130,57 @@ body {
 ```
 
 #### Sound Effects (Web Audio API)
+All games should use the standardized sound library from Audio Explorer. Use these preset sounds for consistency:
+
 ```javascript
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-function createTone(frequency, duration, type = 'sine') {
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    // Implementation...
+// Core sound function - copy this to every game
+function createTone(frequency, duration, type = 'sine', volume = 0.3) {
+    return new Promise(resolve => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.type = type;
+        
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+        
+        oscillator.onended = resolve;
+    });
+}
+
+// Standard game sounds - use these presets for consistency
+function playButtonClick() { createTone(600, 0.1, 'square'); }
+function playSuccess() { createTone(800, 0.15, 'sine'); }
+function playError() { 
+    createTone(400, 0.2, 'triangle');
+    setTimeout(() => createTone(350, 0.3, 'triangle'), 200);
+}
+function playPowerUp() {
+    createTone(523, 0.15, 'square');
+    setTimeout(() => createTone(659, 0.15, 'square'), 150);
+    setTimeout(() => createTone(784, 0.2, 'square'), 300);
+}
+function playVictory() {
+    createTone(523, 0.3, 'triangle');
+    setTimeout(() => createTone(659, 0.3, 'triangle'), 300);
+    setTimeout(() => createTone(784, 0.3, 'triangle'), 600);
+    setTimeout(() => createTone(1047, 0.5, 'triangle'), 900);
+}
+
+// Initialize audio context on first user interaction
+function initAudio() {
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
 }
 ```
 
@@ -248,13 +292,54 @@ Every game must include standard navigation elements for consistency and usabili
 - [ ] Works on mobile (iOS, Android)
 - [ ] Responsive at all screen sizes
 - [ ] Keyboard navigation functional
-- [ ] Sound effects work properly
+- [ ] Sound effects work properly using standard library
 - [ ] Local storage saves/loads correctly
 - [ ] No console errors
 - [ ] Smooth 60fps performance
 - [ ] Navigation elements present and functional
 - [ ] "Back to Games" button works from main game screen
 - [ ] "Restart/New Game" button works during gameplay
+
+### Audio Development Resource
+
+The **Audio Explorer** game serves as both a playable experience and a development tool for this project:
+
+#### Purpose
+- **Sound Library Reference**: Browse 24+ preset game sound effects
+- **Code Generation**: Get copy-paste ready code for any sound
+- **Parameter Experimentation**: Adjust frequency, duration, waveform, and volume
+- **Educational Tool**: Learn Web Audio API through interactive examples
+
+#### Using Audio Explorer for Development
+1. **Visit `/audio-explorer/` to explore available sounds**
+2. **Click any preset sound to hear it and see the code in console**
+3. **Use the Custom Sound Builder to create new effects**
+4. **Copy the generated code directly into your games**
+5. **Maintain consistency by using the standard sound presets**
+
+#### Standard Sound Categories
+- **Game Effects**: Hit targets, power-ups, explosions, victory, failure, laser, shield, electric
+- **UI Effects**: Button clicks, confirmations, notifications, transitions, warnings, menu sounds
+- **Musical Elements**: Scales, chords, arpeggios, bells, fanfares
+
+#### Integration Example
+```javascript
+// In your game, include the core createTone function and use presets:
+function initGameAudio() {
+    // Use standard button click for UI
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.btn')) {
+            playButtonClick();
+        }
+    });
+    
+    // Use standard success sound for achievements
+    function onPlayerSuccess() {
+        playSuccess();
+        // or playPowerUp() for bigger achievements
+    }
+}
+```
 
 ### Performance Testing
 - Test on slower devices and connections
@@ -268,9 +353,84 @@ Every game must include standard navigation elements for consistency and usabili
 1. Create new directory: `{game-name}/`
 2. Build complete game in single `index.html` file
 3. Follow all development patterns and guidelines
-4. Add game-specific `README.md`
+4. **Create comprehensive game-specific `README.md`** (see template below)
 5. Update main portal (`index.html`) with new game card
-6. Update repository `README.md`
+6. **Update main repository `README.md`** with new game entry
+7. Update game count statistics in main portal footer
+8. Ensure all navigation links work correctly
+
+### Game README Template
+Each game directory must include a `README.md` with this structure:
+
+```markdown
+# Game Name
+
+Brief one-line description of the game.
+
+## 🎮 How to Play
+
+Clear, step-by-step instructions on how to play the game.
+
+## ✨ Features
+
+- Feature 1
+- Feature 2
+- Feature 3
+- etc.
+
+## 🎯 Game Details
+
+- **Players**: Number of players (1 player, 2 players, etc.)
+- **Difficulty**: Easy/Medium/Hard or difficulty options available
+- **Duration**: Typical game session length
+- **Platform**: Desktop & Mobile (responsive)
+- **Technology**: HTML5, CSS3, Vanilla JavaScript, Web Audio API
+
+## 🎵 Audio
+
+- List of sound effects used
+- Reference to Audio Explorer for sound library
+
+## 📱 Controls
+
+### Desktop
+- Describe mouse/keyboard controls
+
+### Mobile
+- Describe touch controls
+
+## 🏆 Scoring (if applicable)
+
+Explain how scoring works, win conditions, etc.
+
+## 🛠️ Technical Implementation
+
+Brief overview of interesting technical aspects:
+- Key algorithms used
+- Web APIs utilized
+- Performance optimizations
+- Accessibility features
+
+## 📚 Educational Value (if applicable)
+
+What can developers learn from this game's code?
+
+## 🔗 Related Games
+
+Links to similar games in the collection.
+```
+
+### Main Repository README Updates
+When adding games, the main `README.md` must be updated with:
+
+1. **Game count in header statistics**
+2. **New game entry in the games list** with:
+   - Game name and emoji
+   - Brief description (1-2 sentences)
+   - Key features (3-4 bullet points)
+   - Link to play the game
+3. **Updated "Getting Started" instructions if needed**
+4. **Technology stack updates if new APIs are used**
 
 ### Quality Standards
 - Complete feature implementation
@@ -278,8 +438,9 @@ Every game must include standard navigation elements for consistency and usabili
 - Accessibility compliance
 - Performance benchmarks met
 - Browser compatibility verified
-- Documentation complete
+- **Documentation complete** - Both game README and main README updated
 - **Navigation compliance** - Required navigation elements implemented and tested
+- **Sound library compliance** - Uses standard audio presets from Audio Explorer
 
 ## Common Development Tasks
 
