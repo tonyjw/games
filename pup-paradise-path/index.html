@@ -328,6 +328,31 @@
             text-decoration: none;
         }
 
+        /* Quit Button */
+        .quit-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            z-index: 100;
+        }
+
+        .quit-btn:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #4169E1;
+            color: #4169E1;
+            transform: translateY(-1px);
+        }
+
         .player-config input, .player-config select {
             width: 100%;
             padding: 10px;
@@ -350,18 +375,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 20px 0;
-            min-height: 600px;
+            width: 100%;
+            height: 100%;
         }
 
         .board {
             position: relative;
-            width: 500px;
-            height: 500px;
+            width: 600px;
+            height: 600px;
             border-radius: 50%;
             background: linear-gradient(45deg, #90EE90, #98FB98);
-            border: 8px solid #4169E1;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 10px solid #4169E1;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
         }
 
         .board-center {
@@ -369,25 +394,25 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
+            width: 240px;
+            height: 240px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border: 4px solid #FFD700;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 5px solid #FFD700;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         .game-logo {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 10px;
         }
 
         .game-title-board {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: #FF6B35;
             font-weight: bold;
             text-align: center;
@@ -395,16 +420,16 @@
 
         .tile {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+            width: 70px;
+            height: 70px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
             border: 3px solid #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
 
@@ -436,15 +461,15 @@
         /* Player pieces */
         .player-piece {
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 2rem;
             border: 3px solid #fff;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             z-index: 10;
             transition: all 0.5s ease;
         }
@@ -454,96 +479,582 @@
         .player3 { background: linear-gradient(45deg, #32CD32, #90EE90); }
         .player4 { background: linear-gradient(45deg, #FFD700, #FFA500); }
 
-        /* Game UI */
-        .game-ui {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            gap: 20px;
-            margin: 20px 0;
-            align-items: start;
-        }
-
-        .player-info, .game-controls, .shop-info {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .current-player {
-            border: 3px solid #FF6B35;
-            background: linear-gradient(45deg, rgba(255, 107, 53, 0.1), rgba(255, 215, 0, 0.1));
-        }
-
-        .player-name {
-            color: #FF6B35;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .player-character {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .player-stats {
-            margin-bottom: 15px;
-        }
-
-        .stat-row {
+        /* New Game Layout */
+        .players-header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .current-turn-indicator {
+            color: #FF6B35;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .players-compact {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .player-compact {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .player-compact:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-compact.current-player {
+            border-color: #FF6B35;
+            background: linear-gradient(45deg, rgba(255, 107, 53, 0.1), rgba(255, 215, 0, 0.1));
+            transform: scale(1.05);
+        }
+
+        .player-compact .player-emoji {
+            font-size: 1.5rem;
+        }
+
+        .player-compact .player-name {
+            font-weight: bold;
+            color: #FF6B35;
+            margin-right: 5px;
+        }
+
+        .player-compact .player-stats {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .game-layout {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 200px);
+            min-height: 600px;
+        }
+
+        .board-area {
+            flex: 4;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 20px;
+        }
+
+        .controls-sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 200px;
+        }
+
+        /* 3D Dice Section */
+        .dice-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dice-container {
+            perspective: 300px;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .dice-container:hover {
+            transform: scale(1.05);
+        }
+
+        .dice {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+
+        .dice.rolling {
+            animation: diceRoll 2s ease-out;
+        }
+
+        .dice-face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #f8f8f8, #e0e0e0);
+            border: 3px solid #333;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dice-face.front {
+            transform: translateZ(50px);
+        }
+
+        .dice-face.back {
+            transform: rotateY(180deg) translateZ(50px);
+        }
+
+        .dice-face.right {
+            transform: rotateY(90deg) translateZ(50px);
+        }
+
+        .dice-face.left {
+            transform: rotateY(-90deg) translateZ(50px);
+        }
+
+        .dice-face.top {
+            transform: rotateX(90deg) translateZ(50px);
+        }
+
+        .dice-face.bottom {
+            transform: rotateX(-90deg) translateZ(50px);
+        }
+
+        /* Dice dot patterns - realistic spacing */
+        .dice-dots {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            padding: 8px;
+        }
+
+        .dice-dot {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #333;
+            border-radius: 50%;
+            box-shadow: inset -2px -2px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Face 1 - center dot */
+        .face-1 .dice-dot:nth-child(1) {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .face-1 .dice-dot:not(:nth-child(1)) { display: none; }
+
+        /* Face 2 - diagonal dots */
+        .face-2 .dice-dot:nth-child(1) {
+            top: 15%;
+            left: 15%;
+        }
+        .face-2 .dice-dot:nth-child(2) {
+            bottom: 15%;
+            right: 15%;
+        }
+        .face-2 .dice-dot:not(:nth-child(1)):not(:nth-child(2)) { display: none; }
+
+        /* Face 3 - diagonal with center */
+        .face-3 .dice-dot:nth-child(1) {
+            top: 15%;
+            left: 15%;
+        }
+        .face-3 .dice-dot:nth-child(2) {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .face-3 .dice-dot:nth-child(3) {
+            bottom: 15%;
+            right: 15%;
+        }
+        .face-3 .dice-dot:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) { display: none; }
+
+        /* Face 4 - four corners */
+        .face-4 .dice-dot:nth-child(1) {
+            top: 20%;
+            left: 20%;
+        }
+        .face-4 .dice-dot:nth-child(2) {
+            top: 20%;
+            right: 20%;
+        }
+        .face-4 .dice-dot:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+        }
+        .face-4 .dice-dot:nth-child(4) {
+            bottom: 20%;
+            right: 20%;
+        }
+        .face-4 .dice-dot:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)) { display: none; }
+
+        /* Face 5 - four corners plus center */
+        .face-5 .dice-dot:nth-child(1) {
+            top: 20%;
+            left: 20%;
+        }
+        .face-5 .dice-dot:nth-child(2) {
+            top: 20%;
+            right: 20%;
+        }
+        .face-5 .dice-dot:nth-child(3) {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .face-5 .dice-dot:nth-child(4) {
+            bottom: 20%;
+            left: 20%;
+        }
+        .face-5 .dice-dot:nth-child(5) {
+            bottom: 20%;
+            right: 20%;
+        }
+        .face-5 .dice-dot:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)) { display: none; }
+
+        /* Face 6 - two columns of three */
+        .face-6 .dice-dot:nth-child(1) {
+            top: 18%;
+            left: 25%;
+        }
+        .face-6 .dice-dot:nth-child(2) {
+            top: 18%;
+            right: 25%;
+        }
+        .face-6 .dice-dot:nth-child(3) {
+            top: 50%;
+            left: 25%;
+            transform: translateY(-50%);
+        }
+        .face-6 .dice-dot:nth-child(4) {
+            top: 50%;
+            right: 25%;
+            transform: translateY(-50%);
+        }
+        .face-6 .dice-dot:nth-child(5) {
+            bottom: 18%;
+            left: 25%;
+        }
+        .face-6 .dice-dot:nth-child(6) {
+            bottom: 18%;
+            right: 25%;
+        }
+        .face-6 .dice-dot:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)):not(:nth-child(6)) { display: none; }
+
+        @keyframes diceRoll {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            25% { transform: rotateX(180deg) rotateY(180deg) rotateZ(90deg); }
+            50% { transform: rotateX(360deg) rotateY(90deg) rotateZ(180deg); }
+            75% { transform: rotateX(90deg) rotateY(270deg) rotateZ(270deg); }
+            100% { transform: rotateX(var(--final-x)) rotateY(var(--final-y)) rotateZ(var(--final-z)); }
+        }
+
+        .btn-compact {
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-family: inherit;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(255, 107, 53, 0.3);
+            width: 100%;
+        }
+
+        .btn-compact:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-compact:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Shop Section */
+        .shop-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Player Info Expansion Panel */
+        .player-info-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .player-info-modal.active {
+            display: flex;
+        }
+
+        .player-info-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .player-info-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #87CEEB;
+        }
+
+        .player-info-character {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .player-info-name {
+            font-size: 1.8rem;
+            color: #FF6B35;
+            font-weight: bold;
             margin-bottom: 5px;
         }
 
-        .inventory {
-            margin-top: 10px;
-        }
-
-        .inventory-item {
-            display: inline-block;
-            margin-right: 10px;
+        .player-info-breed {
             font-size: 1.2rem;
+            color: #4169E1;
+            margin-bottom: 10px;
         }
 
-        /* Spinner */
-        .spinner-container {
-            text-align: center;
+        .player-info-ability {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #87CEEB;
+            border-radius: 12px;
+            padding: 15px;
             margin: 20px 0;
         }
 
-        .spinner {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 8px solid #4169E1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: linear-gradient(45deg, #FFD700, #FFA500);
-            position: relative;
-            overflow: hidden;
+        .player-info-ability h4 {
+            color: #FF6B35;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
         }
 
-        .spinner:hover {
-            transform: scale(1.05);
+        .player-info-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #87CEEB;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            color: #4169E1;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FF6B35;
+        }
+
+        .inventory-detailed {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #87CEEB;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .inventory-detailed h4 {
+            color: #FF6B35;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .inventory-item-detailed {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+        }
+
+        .inventory-item-detailed .emoji {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .inventory-item-detailed .count {
+            font-weight: bold;
+            color: #4169E1;
+        }
+
+        .inventory-item-detailed .name {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .close-info-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .close-info-btn:hover {
+            color: #FF6B35;
+        }
+
+        /* Custom Message System */
+        .message-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .game-message {
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.1rem;
+            animation: slideDown 0.3s ease-out;
+            transform: translateY(0);
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+
+        .game-message.hiding {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+
+        .game-message.success {
+            background: linear-gradient(45deg, #32CD32, #90EE90);
+            box-shadow: 0 8px 25px rgba(50, 205, 50, 0.4);
+        }
+
+        .game-message.error {
+            background: linear-gradient(45deg, #FF4500, #FF6347);
+            box-shadow: 0 8px 25px rgba(255, 69, 0, 0.4);
+        }
+
+        .game-message.info {
+            background: linear-gradient(45deg, #4169E1, #87CEEB);
             box-shadow: 0 8px 25px rgba(65, 105, 225, 0.4);
         }
 
-        .spinner-number {
-            font-size: 4rem;
-            font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            z-index: 2;
+        .message-text {
+            flex: 1;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
-        .spinner.spinning {
-            animation: spin 2s ease-out;
+        .message-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 0 0 15px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .message-close:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
         }
 
         @keyframes spin {
@@ -688,38 +1199,79 @@
             }
             
             .board {
-                width: 350px;
-                height: 350px;
+                width: 400px;
+                height: 400px;
             }
             
             .board-center {
-                width: 140px;
-                height: 140px;
+                width: 160px;
+                height: 160px;
             }
             
             .game-logo {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             
             .game-title-board {
-                font-size: 1rem;
+                font-size: 1.1rem;
             }
             
             .tile {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
-            }
-            
-            .player-piece {
-                width: 30px;
-                height: 30px;
+                width: 50px;
+                height: 50px;
                 font-size: 1.4rem;
             }
             
-            .game-ui {
-                grid-template-columns: 1fr;
-                gap: 15px;
+            .player-piece {
+                width: 35px;
+                height: 35px;
+                font-size: 1.6rem;
+            }
+            
+            .game-layout {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .board-area {
+                order: 1;
+            }
+            
+            .controls-sidebar {
+                order: 2;
+                flex-direction: row;
+                justify-content: space-around;
+                min-width: auto;
+            }
+            
+            .dice-container {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .dice-face {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .dice-dots {
+                width: 56px;
+                height: 56px;
+                padding: 6px;
+            }
+            
+            .dice-dot {
+                width: 10px;
+                height: 10px;
+            }
+            
+            .players-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .players-compact {
+                justify-content: center;
             }
             
             .character-grid {
@@ -751,21 +1303,33 @@
             }
             
             .board {
-                width: 280px;
-                height: 280px;
+                width: 320px;
+                height: 320px;
             }
             
             .board-center {
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
             }
             
             .game-logo {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
             
             .game-title-board {
-                font-size: 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .tile {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .player-piece {
+                width: 28px;
+                height: 28px;
+                font-size: 1.4rem;
             }
         }
     </style>
@@ -869,51 +1433,118 @@
 
         <!-- Game Screen -->
         <div class="screen" id="gameScreen">
-            <div class="game-ui">
-                <!-- Players Info -->
-                <div class="player-info" id="playersInfo">
-                    <!-- Player info cards populated by JavaScript -->
-                </div>
-
-                <!-- Game Controls -->
-                <div class="game-controls">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <h3 style="color: #FF6B35; margin-bottom: 10px;" id="currentPlayerTurn">Player 1's Turn</h3>
-                        <button class="nav-btn" onclick="showPlayerSetup()">🔄 New Game</button>
-                    </div>
-                    
-                    <div class="spinner-container">
-                        <div class="spinner" id="spinner" onclick="spinDice()">
-                            <div class="spinner-number" id="spinnerNumber">🎲</div>
-                        </div>
-                        <button class="btn" id="spinButton" onclick="spinDice()">🎲 Spin!</button>
-                    </div>
-                </div>
-
-                <!-- Shop/Game Info -->
-                <div class="shop-info">
-                    <h3 style="color: #FF6B35; margin-bottom: 15px;">🛍️ Dog Shop</h3>
-                    <div style="margin-bottom: 15px;">
-                        <div style="margin-bottom: 8px;">🎾 Tennis Ball: 1 coin</div>
-                        <div style="margin-bottom: 8px;">🦴 Bone: 2 coins</div>
-                        <div style="margin-bottom: 8px;">🧸 Stuffie: 3 coins</div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 12px;">
-                        <strong style="color: #FF6B35;">Goal:</strong><br>
-                        First to get one of each toy triggers endgame!<br>
-                        Then most toys wins! 🏆
-                    </div>
+            <button class="quit-btn" onclick="showStartScreen()">← Quit</button>
+            
+            <!-- Message Container -->
+            <div class="message-container" id="messageContainer"></div>
+            
+            <!-- Compact Player Names Header -->
+            <div class="players-header">
+                <div class="current-turn-indicator" id="currentPlayerTurn">Player 1's Turn</div>
+                <div class="players-compact" id="playersCompact">
+                    <!-- Compact player info populated by JavaScript -->
                 </div>
             </div>
 
-            <!-- Game Board -->
-            <div class="board-container">
-                <div class="board" id="gameBoard">
-                    <div class="board-center">
-                        <div class="game-logo">🐕</div>
-                        <div class="game-title-board">Pup Paradise Path</div>
+            <!-- Main Game Layout -->
+            <div class="game-layout">
+                <!-- Game Board Area (4/5 width) -->
+                <div class="board-area">
+                    <div class="board-container">
+                        <div class="board" id="gameBoard">
+                            <div class="board-center">
+                                <div class="game-logo">🐕</div>
+                                <div class="game-title-board">Pup Paradise Path</div>
+                            </div>
+                            <!-- Tiles and player pieces populated by JavaScript -->
+                        </div>
                     </div>
-                    <!-- Tiles and player pieces populated by JavaScript -->
+                </div>
+
+                <!-- Controls Sidebar (1/5 width) -->
+                <div class="controls-sidebar">
+                    <!-- Dice Controls -->
+                    <div class="dice-section">
+                        <div class="dice-container" onclick="rollDice()">
+                            <div class="dice" id="dice">
+                                <div class="dice-face front face-1">
+                                    <div class="dice-dots">
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                    </div>
+                                </div>
+                                <div class="dice-face back face-6">
+                                    <div class="dice-dots">
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                    </div>
+                                </div>
+                                <div class="dice-face right face-2">
+                                    <div class="dice-dots">
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                    </div>
+                                </div>
+                                <div class="dice-face left face-5">
+                                    <div class="dice-dots">
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                    </div>
+                                </div>
+                                <div class="dice-face top face-3">
+                                    <div class="dice-dots">
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                    </div>
+                                </div>
+                                <div class="dice-face bottom face-4">
+                                    <div class="dice-dots">
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                        <div class="dice-dot"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-compact" id="rollButton" onclick="rollDice()">🎲 Roll Dice!</button>
+                    </div>
+
+                    <!-- Shop Info -->
+                    <div class="shop-section">
+                        <h4 style="color: #FF6B35; margin-bottom: 10px; font-size: 1.1rem;">🛍️ Shop</h4>
+                        <div style="font-size: 0.9rem; line-height: 1.4;">
+                            <div>🎾 Tennis Ball: 1 coin</div>
+                            <div>🦴 Bone: 2 coins</div>
+                            <div>🧸 Stuffie: 3 coins</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.8rem;">
+                            <strong style="color: #FF6B35;">Goal:</strong><br>
+                            Get one of each toy to trigger endgame!
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -940,6 +1571,16 @@
                 </div>
                 <button class="btn" onclick="showPlayerSetup()">🔄 Play Again</button>
                 <button class="btn" onclick="showStartScreen()">🏠 Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Player Info Modal -->
+        <div class="player-info-modal" id="playerInfoModal">
+            <div class="player-info-content">
+                <button class="close-info-btn" onclick="closePlayerInfo()">✕</button>
+                <div id="playerInfoDetails">
+                    <!-- Player info populated by JavaScript -->
+                </div>
             </div>
         </div>
     </div>
@@ -1312,9 +1953,9 @@
                 
                 // Position tiles in circle
                 const angle = (index * 360 / boardTiles.length) - 90; // Start at top
-                const radius = 180; // Distance from center
-                const x = 250 + radius * Math.cos(angle * Math.PI / 180) - 30; // Center and offset for tile size
-                const y = 250 + radius * Math.sin(angle * Math.PI / 180) - 30;
+                const radius = 215; // Distance from center
+                const x = 300 + radius * Math.cos(angle * Math.PI / 180) - 35; // Center and offset for tile size
+                const y = 300 + radius * Math.sin(angle * Math.PI / 180) - 35;
                 
                 tile.style.left = x + 'px';
                 tile.style.top = y + 'px';
@@ -1344,14 +1985,14 @@
 
         function positionPlayerPiece(piece, tileIndex, playerOffset = 0) {
             const angle = (tileIndex * 360 / boardTiles.length) - 90;
-            const radius = 180;
+            const radius = 215;
             
             // Offset multiple players on same tile
             const offsetAngle = (playerOffset - 1.5) * 8; // Spread players around tile
             const adjustedAngle = angle + offsetAngle;
             
-            const x = 250 + radius * Math.cos(adjustedAngle * Math.PI / 180) - 20;
-            const y = 250 + radius * Math.sin(adjustedAngle * Math.PI / 180) - 20;
+            const x = 300 + radius * Math.cos(adjustedAngle * Math.PI / 180) - 22;
+            const y = 300 + radius * Math.sin(adjustedAngle * Math.PI / 180) - 22;
             
             piece.style.left = x + 'px';
             piece.style.top = y + 'px';
@@ -1363,65 +2004,80 @@
             document.getElementById('currentPlayerTurn').textContent = 
                 `${gameState.players[gameState.currentPlayerIndex].name}'s Turn`;
 
-            // Update players info
-            const playersInfo = document.getElementById('playersInfo');
-            playersInfo.innerHTML = gameState.players.map((player, index) => {
+            // Update compact players info
+            const playersCompact = document.getElementById('playersCompact');
+            playersCompact.innerHTML = gameState.players.map((player, index) => {
                 const isCurrentPlayer = index === gameState.currentPlayerIndex;
                 const hasWinCondition = player.inventory.tennis > 0 && player.inventory.bone > 0 && player.inventory.stuffie > 0;
                 const totalToys = player.inventory.tennis + player.inventory.bone + player.inventory.stuffie;
                 
                 return `
-                    <div class="player-info ${isCurrentPlayer ? 'current-player' : ''}" style="margin-bottom: 15px;">
-                        <div class="player-name">${player.name}</div>
-                        <div class="player-character">${player.character.emoji} ${player.character.name}</div>
-                        <div class="player-stats">
-                            <div class="stat-row">
-                                <span>💰 Coins:</span>
-                                <span>${player.coins}</span>
+                    <div class="player-compact ${isCurrentPlayer ? 'current-player' : ''}" onclick="showPlayerInfo(${player.id})">
+                        <div class="player-emoji">${player.character.emoji}</div>
+                        <div>
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-stats">
+                                💰${player.coins} | 🎯${totalToys} | 🎾${player.inventory.tennis} 🦴${player.inventory.bone} 🧸${player.inventory.stuffie}
+                                ${hasWinCondition ? ' ✅' : ''}
                             </div>
-                            <div class="stat-row">
-                                <span>🎯 Total Toys:</span>
-                                <span>${totalToys}</span>
-                            </div>
-                            ${hasWinCondition ? '<div style="color: #32CD32; font-weight: bold;">✅ Win Condition Met!</div>' : ''}
-                        </div>
-                        <div class="inventory">
-                            <div class="inventory-item">🎾 ${player.inventory.tennis}</div>
-                            <div class="inventory-item">🦴 ${player.inventory.bone}</div>
-                            <div class="inventory-item">🧸 ${player.inventory.stuffie}</div>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Spinner Logic
-        function spinDice() {
-            if (document.getElementById('spinner').classList.contains('spinning')) return;
+        // 3D Dice Rolling Logic
+        function rollDice() {
+            const dice = document.getElementById('dice');
+            if (dice.classList.contains('rolling')) return;
             
             initAudio();
             playButtonClick();
             
-            const spinner = document.getElementById('spinner');
-            const spinnerNumber = document.getElementById('spinnerNumber');
-            const spinButton = document.getElementById('spinButton');
+            const rollButton = document.getElementById('rollButton');
             
-            spinner.classList.add('spinning');
-            spinButton.disabled = true;
-            spinButton.textContent = 'Spinning...';
+            dice.classList.add('rolling');
+            rollButton.disabled = true;
+            rollButton.textContent = 'Rolling...';
             
             // Generate random number 1-6
             const result = Math.floor(Math.random() * 6) + 1;
             
+            // Calculate final rotation based on result
+            const rotations = getDiceRotation(result);
+            dice.style.setProperty('--final-x', rotations.x + 'deg');
+            dice.style.setProperty('--final-y', rotations.y + 'deg');
+            dice.style.setProperty('--final-z', rotations.z + 'deg');
+            
             setTimeout(() => {
-                spinner.classList.remove('spinning');
-                spinnerNumber.textContent = result;
-                spinButton.disabled = false;
-                spinButton.textContent = '🎲 Spin!';
+                dice.classList.remove('rolling');
+                dice.style.transform = `rotateX(${rotations.x}deg) rotateY(${rotations.y}deg) rotateZ(${rotations.z}deg)`;
+                rollButton.disabled = false;
+                rollButton.textContent = '🎲 Roll Dice!';
                 
                 // Move player
                 movePlayer(result);
             }, 2000);
+        }
+
+        function getDiceRotation(result) {
+            // Define rotations to show each face
+            const rotations = {
+                1: { x: 0, y: 0, z: 0 },      // front
+                2: { x: 0, y: -90, z: 0 },    // right
+                3: { x: -90, y: 0, z: 0 },    // top
+                4: { x: 90, y: 0, z: 0 },     // bottom
+                5: { x: 0, y: 90, z: 0 },     // left
+                6: { x: 0, y: 180, z: 0 }     // back
+            };
+            
+            // Add random full rotations for more realistic rolling
+            const baseRotation = rotations[result];
+            return {
+                x: baseRotation.x + (Math.floor(Math.random() * 4) * 360),
+                y: baseRotation.y + (Math.floor(Math.random() * 4) * 360),
+                z: baseRotation.z + (Math.floor(Math.random() * 4) * 360)
+            };
         }
 
         // Player Movement
@@ -1499,10 +2155,10 @@
             // Golden Retriever special ability
             if (player.character.id === 'golden') {
                 player.getAnotherSpin = true;
-                showMessage(`${player.name} earned 1 coin + bonus spin from ${player.character.name}'s ability!`);
+                showSuccessMessage(`${player.name} earned 1 coin + bonus spin from ${player.character.name}'s ability!`);
             } else {
                 player.getAnotherSpin = true;
-                showMessage(`${player.name} earned 1 coin and gets another spin!`);
+                showSuccessMessage(`${player.name} earned 1 coin and gets another spin!`);
             }
         }
 
@@ -1510,7 +2166,7 @@
             player.coins += 2;
             player.getAnotherSpin = true;
             playPowerUp();
-            showMessage(`${player.name} earned 2 coins and gets another spin!`);
+            showSuccessMessage(`${player.name} earned 2 coins and gets another spin!`);
         }
 
         function handleBadTile(player) {
@@ -1521,7 +2177,7 @@
                 player.badTileCounter++;
                 if (player.badTileCounter % 2 === 0) {
                     shouldApplyEffect = false;
-                    showMessage(`${player.name} avoided the bad tile effect with ${player.character.name}'s bravery!`);
+                    showInfoMessage(`${player.name} avoided the bad tile effect with ${player.character.name}'s bravery!`);
                 }
             }
             
@@ -1530,9 +2186,9 @@
                 const avoidRoll = Math.floor(Math.random() * 6) + 1;
                 if (avoidRoll >= 4) {
                     shouldApplyEffect = false;
-                    showMessage(`${player.name} sneakily avoided the bad tile (rolled ${avoidRoll})!`);
+                    showInfoMessage(`${player.name} sneakily avoided the bad tile (rolled ${avoidRoll})!`);
                 } else {
-                    showMessage(`${player.name} couldn't sneak away (rolled ${avoidRoll})`);
+                    showInfoMessage(`${player.name} couldn't sneak away (rolled ${avoidRoll})`);
                 }
             }
             
@@ -1548,21 +2204,21 @@
                         const playerOffset = gameState.players.findIndex(p => p.id === player.id);
                         positionPlayerPiece(piece, player.position, playerOffset);
                     }
-                    showMessage(`${player.name} only went back 2 spaces thanks to ${player.character.name}'s toughness!`);
+                    showErrorMessage(`${player.name} only went back 2 spaces thanks to ${player.character.name}'s toughness!`);
                 } else {
                     // Normal bad tile effect - go back to turn start
                     player.position = player.turnStartPosition;
                     const piece = document.querySelector(`[data-player-id="${player.id}"]`);
                     const playerOffset = gameState.players.findIndex(p => p.id === player.id);
                     positionPlayerPiece(piece, player.position, playerOffset);
-                    showMessage(`${player.name} went back to the start of their turn!`);
+                    showErrorMessage(`${player.name} went back to the start of their turn!`);
                 }
             }
         }
 
         function handleShopTile(player) {
             playSuccess();
-            showMessage(`${player.name} found a Dog Shop!`);
+            showInfoMessage(`${player.name} found a Dog Shop!`);
             openShop(player);
         }
 
@@ -1605,7 +2261,7 @@
                 // Update shop display
                 openShop(currentPlayer);
                 
-                showMessage(`${currentPlayer.name} bought a ${shopItems.find(i => i.id === itemId).name}!`);
+                showSuccessMessage(`${currentPlayer.name} bought a ${shopItems.find(i => i.id === itemId).name}!`);
             }
         }
 
@@ -1648,7 +2304,7 @@
                     hasPlayedFinalTurn: player.id === triggeringPlayer.id
                 }));
                 
-                showMessage(`${triggeringPlayer.name} has one of each toy! Final round begins!`);
+                showInfoMessage(`${triggeringPlayer.name} has one of each toy! Final round begins!`);
                 playVictory();
                 
                 return true;
@@ -1688,10 +2344,150 @@
             showScreen('winScreen');
         }
 
-        // Message System
-        function showMessage(message) {
-            // Simple alert for now - could be enhanced with custom modal
-            setTimeout(() => alert(message), 100);
+        // Custom Message System
+        function showMessage(message, type = 'default', duration = 4000) {
+            const container = document.getElementById('messageContainer');
+            
+            // Create message element
+            const messageEl = document.createElement('div');
+            messageEl.className = `game-message ${type}`;
+            
+            messageEl.innerHTML = `
+                <div class="message-text">${message}</div>
+                <button class="message-close" onclick="hideMessage(this)">✕</button>
+            `;
+            
+            // Add to container
+            container.appendChild(messageEl);
+            
+            // Auto-hide after duration
+            setTimeout(() => {
+                hideMessage(messageEl.querySelector('.message-close'));
+            }, duration);
+            
+            // Play sound based on message type
+            if (type === 'success') {
+                playSuccess();
+            } else if (type === 'error') {
+                playError();
+            } else if (type === 'info') {
+                createTone(500, 0.1, 'sine', 0.2);
+            }
+        }
+
+        function hideMessage(closeButton) {
+            const messageEl = closeButton.parentElement;
+            messageEl.classList.add('hiding');
+            
+            setTimeout(() => {
+                if (messageEl.parentElement) {
+                    messageEl.parentElement.removeChild(messageEl);
+                }
+            }, 300);
+        }
+
+        // Convenience functions for different message types
+        function showSuccessMessage(message) {
+            showMessage(message, 'success');
+        }
+
+        function showErrorMessage(message) {
+            showMessage(message, 'error');
+        }
+
+        function showInfoMessage(message) {
+            showMessage(message, 'info');
+        }
+
+        // Player Info Modal Functions
+        function showPlayerInfo(playerId) {
+            const player = gameState.players.find(p => p.id === playerId);
+            if (!player) return;
+
+            playButtonClick();
+
+            const hasWinCondition = player.inventory.tennis > 0 && player.inventory.bone > 0 && player.inventory.stuffie > 0;
+            const totalToys = player.inventory.tennis + player.inventory.bone + player.inventory.stuffie;
+            
+            const modalContent = `
+                <div class="player-info-header">
+                    <div class="player-info-character">${player.character.emoji}</div>
+                    <div class="player-info-name">${player.name}</div>
+                    <div class="player-info-breed">${player.character.name} (${player.character.breed})</div>
+                </div>
+
+                <div class="player-info-ability">
+                    <h4>🌟 Special Ability</h4>
+                    <p>${player.character.ability}</p>
+                    ${player.character.id === 'frenchie' ? 
+                        `<p style="margin-top: 8px; color: #666; font-size: 0.9rem;">
+                            Re-roll ${player.specialUsed ? 'used' : 'available'} this game
+                        </p>` : ''}
+                    ${player.character.id === 'pitbull' ? 
+                        `<p style="margin-top: 8px; color: #666; font-size: 0.9rem;">
+                            Bad tiles encountered: ${player.badTileCounter || 0}
+                        </p>` : ''}
+                </div>
+
+                <div class="player-info-stats">
+                    <div class="stat-card">
+                        <h4>💰 Coins</h4>
+                        <div class="stat-value">${player.coins}</div>
+                        <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Used to buy toys at Dog Shops</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>🎯 Total Toys</h4>
+                        <div class="stat-value">${totalToys}</div>
+                        <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                            ${hasWinCondition ? 'Win condition met!' : 'Need one of each type'}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="inventory-detailed">
+                    <h4>🎒 Toy Collection</h4>
+                    <div class="inventory-grid">
+                        <div class="inventory-item-detailed">
+                            <span class="emoji">🎾</span>
+                            <div class="count">${player.inventory.tennis}</div>
+                            <div class="name">Tennis Ball</div>
+                            <div style="font-size: 0.7rem; color: #999;">1 coin each</div>
+                        </div>
+                        <div class="inventory-item-detailed">
+                            <span class="emoji">🦴</span>
+                            <div class="count">${player.inventory.bone}</div>
+                            <div class="name">Bone</div>
+                            <div style="font-size: 0.7rem; color: #999;">2 coins each</div>
+                        </div>
+                        <div class="inventory-item-detailed">
+                            <span class="emoji">🧸</span>
+                            <div class="count">${player.inventory.stuffie}</div>
+                            <div class="name">Stuffie</div>
+                            <div style="font-size: 0.7rem; color: #999;">3 coins each</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(255, 215, 0, 0.1); border-radius: 8px; font-size: 0.9rem;">
+                        <strong style="color: #FF6B35;">Goal:</strong> Be the first to collect one of each toy type to trigger the endgame. Then the player with the most total toys wins!
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.7); border-radius: 12px;">
+                    <div style="font-size: 0.9rem; color: #666; line-height: 1.4;">
+                        <strong>Game Position:</strong> Tile ${player.position + 1} of ${boardTiles.length}<br>
+                        <strong>Turn Start Position:</strong> Tile ${player.turnStartPosition + 1}<br>
+                        ${player.position === player.turnStartPosition ? 
+                            '<span style="color: #32CD32;">✅ Safe from bad tile effects</span>' : 
+                            '<span style="color: #FF6B35;">⚠️ Would return here if hit by bad tile</span>'}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('playerInfoDetails').innerHTML = modalContent;
+            document.getElementById('playerInfoModal').classList.add('active');
+        }
+
+        function closePlayerInfo() {
+            document.getElementById('playerInfoModal').classList.remove('active');
         }
 
         // Initialize
@@ -1703,6 +2499,13 @@
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.btn, .nav-btn, .buy-btn')) {
                     playButtonClick();
+                }
+            });
+
+            // Close player info modal when clicking outside
+            document.getElementById('playerInfoModal').addEventListener('click', (e) => {
+                if (e.target.id === 'playerInfoModal') {
+                    closePlayerInfo();
                 }
             });
         });
