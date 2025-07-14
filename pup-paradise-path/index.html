@@ -137,6 +137,30 @@
             box-shadow: 0 6px 20px rgba(65, 105, 225, 0.4);
         }
 
+        /* Player Count Selection */
+        .player-count-btn {
+            background: linear-gradient(45deg, #4169E1, #87CEEB);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
+        }
+
+        .player-count-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(65, 105, 225, 0.4);
+        }
+
+        .player-count-btn.selected {
+            background: linear-gradient(45deg, #FF6B35, #FFD700);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+
         /* Character Selection */
         .character-grid {
             display: grid;
@@ -188,22 +212,120 @@
         /* Player Setup */
         .player-setup {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin: 30px 0;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .player-config {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 16px;
-            padding: 20px;
+            padding: 25px;
             text-align: left;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .player-config:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #87CEEB;
         }
 
         .player-config h3 {
             color: #FF6B35;
             margin-bottom: 15px;
+            font-size: 1.3rem;
             text-align: center;
+        }
+
+        .player-config label {
+            display: block;
+            color: #4169E1;
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 15px;
+        }
+
+        .player-config input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #87CEEB;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .player-config input[type="text"]:focus {
+            outline: none;
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .player-config select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #87CEEB;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .player-config select:focus {
+            outline: none;
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .character-display {
+            margin-top: 15px;
+            font-size: 3rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 15px;
+            border: 2px solid #87CEEB;
+        }
+
+        /* Primary Start Game Button */
+        .primary-btn {
+            background: linear-gradient(45deg, #32CD32, #98FB98) !important;
+            box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4) !important;
+            font-size: 1.4rem !important;
+            padding: 18px 36px !important;
+            font-weight: bold !important;
+            transform: scale(1.05);
+        }
+
+        .primary-btn:hover {
+            transform: scale(1.1) translateY(-3px) !important;
+            box-shadow: 0 10px 30px rgba(50, 205, 50, 0.5) !important;
+        }
+
+        /* Subtle Back Button */
+        .back-text-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: underline;
+        }
+
+        .back-text-btn:hover {
+            color: #4169E1;
+            background: rgba(65, 105, 225, 0.1);
+            text-decoration: none;
         }
 
         .player-config input, .player-config select {
@@ -603,6 +725,24 @@
             .character-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .player-setup {
+                grid-template-columns: 1fr;
+            }
+            
+            .player-count-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            
+            .primary-btn {
+                font-size: 1.2rem !important;
+                padding: 15px 30px !important;
+            }
+            
+            .back-text-btn {
+                font-size: 0.9rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -681,21 +821,50 @@
         <!-- Character Selection Screen -->
         <div class="screen" id="characterSelectScreen">
             <h2 class="title" style="font-size: 2.5rem;">Choose Your Pup!</h2>
+            
+            <!-- Player Count Selection -->
+            <div style="margin: 20px 0; text-align: center;">
+                <h3 style="color: #4169E1; margin-bottom: 15px;">Number of Players</h3>
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <button class="player-count-btn" data-count="2" onclick="setPlayerCount(2)">2 Players</button>
+                    <button class="player-count-btn" data-count="3" onclick="setPlayerCount(3)">3 Players</button>
+                    <button class="player-count-btn" data-count="4" onclick="setPlayerCount(4)">4 Players</button>
+                </div>
+                <p style="color: #666; margin-top: 10px; font-size: 0.9rem;">Selected: <span id="playerCountDisplay">2</span> players</p>
+            </div>
+            
             <div class="character-grid" id="characterGrid">
                 <!-- Characters populated by JavaScript -->
             </div>
-            <button class="btn" onclick="showPlayerSetup()">➡️ Next: Player Setup</button>
-            <button class="btn" onclick="showStartScreen()">🏠 Back to Menu</button>
+            
+            <div style="margin: 20px 0;">
+                <p style="color: #666; text-align: center; margin-bottom: 10px;">
+                    Select <span id="charactersNeeded">2</span> characters for your <span id="playersCount">2</span> players
+                </p>
+                <p style="color: #FF6B35; text-align: center; font-weight: bold;">
+                    Characters selected: <span id="selectedCount">0</span>
+                </p>
+            </div>
+            
+            <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <button class="back-text-btn" onclick="showStartScreen()">← Back to Menu</button>
+                <button class="btn primary-btn" id="nextToSetupBtn" onclick="showPlayerSetup()" disabled style="opacity: 0.5;">➡️ Next: Player Setup</button>
+            </div>
         </div>
 
         <!-- Player Setup Screen -->
         <div class="screen" id="playerSetupScreen">
             <h2 class="title" style="font-size: 2.5rem;">Player Setup</h2>
+            <p style="color: #666; text-align: center; margin-bottom: 20px;">
+                Enter player names for your chosen characters. Each player will use their character's special ability during the game!
+            </p>
             <div class="player-setup" id="playerSetup">
                 <!-- Player configs populated by JavaScript -->
             </div>
-            <button class="btn" onclick="startGame()">🚀 Start Game</button>
-            <button class="btn" onclick="showCharacterSelect()">⬅️ Back to Characters</button>
+            <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <button class="back-text-btn" onclick="showCharacterSelect()">← Back to Characters</button>
+                <button class="btn primary-btn" onclick="startGame()" id="startGameBtn">🚀 Start Game</button>
+            </div>
         </div>
 
         <!-- Game Screen -->
@@ -880,6 +1049,7 @@
             players: [],
             currentPlayerIndex: 0,
             selectedCharacters: [],
+            playerCount: 2, // 2-4 players
             gamePhase: 'setup', // setup, playing, endgame, finished
             endgameTriggered: false,
             finalRoundPlayers: []
@@ -903,12 +1073,69 @@
         function showStartScreen() { showScreen('startScreen'); }
         function showRules() { showScreen('rulesScreen'); }
         function showCharacterSelect() { 
+            initializeCharacterSelect();
             renderCharacterSelect();
             showScreen('characterSelectScreen'); 
         }
         function showPlayerSetup() { 
             renderPlayerSetup();
             showScreen('playerSetupScreen'); 
+        }
+
+        // Player Count Selection
+        function initializeCharacterSelect() {
+            // Reset state
+            gameState.selectedCharacters = [];
+            updatePlayerCountDisplay();
+            updateCharacterSelectionStatus();
+        }
+
+        function setPlayerCount(count) {
+            gameState.playerCount = count;
+            
+            // Reset character selection when player count changes
+            gameState.selectedCharacters = [];
+            
+            // Update UI
+            updatePlayerCountDisplay();
+            updateCharacterSelectionStatus();
+            updateCharacterSelection();
+            
+            playButtonClick();
+        }
+
+        function updatePlayerCountDisplay() {
+            // Update player count buttons
+            document.querySelectorAll('.player-count-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                if (parseInt(btn.dataset.count) === gameState.playerCount) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            // Update display text
+            document.getElementById('playerCountDisplay').textContent = gameState.playerCount;
+            document.getElementById('charactersNeeded').textContent = gameState.playerCount;
+            document.getElementById('playersCount').textContent = gameState.playerCount;
+        }
+
+        function updateCharacterSelectionStatus() {
+            const selectedCount = gameState.selectedCharacters.length;
+            const needed = gameState.playerCount;
+            
+            document.getElementById('selectedCount').textContent = selectedCount;
+            
+            // Enable/disable next button
+            const nextBtn = document.getElementById('nextToSetupBtn');
+            if (selectedCount === needed) {
+                nextBtn.disabled = false;
+                nextBtn.style.opacity = '1';
+                nextBtn.style.transform = 'scale(1.05)';
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.style.opacity = '0.5';
+                nextBtn.style.transform = 'scale(1)';
+            }
         }
 
         // Character Selection
@@ -928,13 +1155,21 @@
             // Toggle selection
             const index = gameState.selectedCharacters.indexOf(characterId);
             if (index === -1) {
-                if (gameState.selectedCharacters.length < 4) {
+                // Add character if we haven't reached the limit
+                if (gameState.selectedCharacters.length < gameState.playerCount) {
                     gameState.selectedCharacters.push(characterId);
                 }
             } else {
+                // Remove character
                 gameState.selectedCharacters.splice(index, 1);
             }
 
+            updateCharacterSelection();
+            updateCharacterSelectionStatus();
+            playButtonClick();
+        }
+
+        function updateCharacterSelection() {
             // Update visual selection
             document.querySelectorAll('.character-card').forEach(card => {
                 card.classList.remove('selected');
@@ -944,37 +1179,66 @@
                 const card = document.querySelector(`[data-character="${charId}"]`);
                 if (card) card.classList.add('selected');
             });
-
-            playButtonClick();
         }
 
         // Player Setup
         function renderPlayerSetup() {
             const container = document.getElementById('playerSetup');
-            const numPlayers = Math.min(gameState.selectedCharacters.length, 4);
+            const numPlayers = gameState.playerCount;
             
             container.innerHTML = '';
             for (let i = 0; i < numPlayers; i++) {
                 const charId = gameState.selectedCharacters[i];
                 const character = characters.find(c => c.id === charId);
                 
-                container.innerHTML += `
-                    <div class="player-config">
-                        <h3>Player ${i + 1}</h3>
-                        <label>Player Name:</label>
-                        <input type="text" id="playerName${i}" value="Player ${i + 1}" maxlength="15">
-                        <label>Character:</label>
-                        <select id="playerChar${i}">
-                            ${gameState.selectedCharacters.map(cId => {
-                                const c = characters.find(char => char.id === cId);
-                                return `<option value="${cId}" ${cId === charId ? 'selected' : ''}>${c.name} (${c.breed})</option>`;
-                            }).join('')}
-                        </select>
-                        <div style="margin-top: 10px; font-size: 2rem; text-align: center;">
-                            ${character ? character.emoji : '🐕'}
-                        </div>
+                const playerDiv = document.createElement('div');
+                playerDiv.className = 'player-config';
+                playerDiv.innerHTML = `
+                    <div class="character-display">
+                        ${character ? character.emoji : '🐕'}
                     </div>
+                    <h3>${character ? character.name : 'Unknown'} (${character ? character.breed : 'Dog'})</h3>
+                    <div style="margin-bottom: 15px; font-size: 0.9rem; color: #666; text-align: center;">
+                        <strong>Ability:</strong> ${character ? character.ability : 'No ability'}
+                    </div>
+                    <label>Player Name:</label>
+                    <input type="text" 
+                           id="playerName${i}" 
+                           value="Player ${i + 1}" 
+                           maxlength="15" 
+                           placeholder="Enter player name"
+                           tabindex="${i + 1}"
+                           onkeydown="handlePlayerNameKeydown(event, ${i})"
+                           onfocus="this.select()">
                 `;
+                container.appendChild(playerDiv);
+            }
+            
+            // Focus on first input for quick keyboard navigation
+            setTimeout(() => {
+                const firstInput = document.getElementById('playerName0');
+                if (firstInput) {
+                    firstInput.focus();
+                    firstInput.select();
+                }
+            }, 100);
+        }
+
+        function handlePlayerNameKeydown(event, playerIndex) {
+            if (event.key === 'Enter' || event.key === 'Tab') {
+                event.preventDefault();
+                
+                // Move to next player input or start game if on last player
+                const nextPlayerIndex = playerIndex + 1;
+                const nextInput = document.getElementById(`playerName${nextPlayerIndex}`);
+                
+                if (nextInput) {
+                    nextInput.focus();
+                    nextInput.select();
+                } else {
+                    // Last player, focus on start game button
+                    document.getElementById('startGameBtn').focus();
+                }
             }
         }
 
@@ -982,18 +1246,36 @@
         function startGame() {
             initAudio();
             
-            // Create players from setup
-            gameState.players = [];
-            const numPlayers = Math.min(gameState.selectedCharacters.length, 4);
+            // Validate that all required inputs are filled
+            const numPlayers = gameState.playerCount;
+            let isValid = true;
             
             for (let i = 0; i < numPlayers; i++) {
                 const nameInput = document.getElementById(`playerName${i}`);
-                const charSelect = document.getElementById(`playerChar${i}`);
-                const character = characters.find(c => c.id === charSelect.value);
+                
+                if (!nameInput.value.trim()) {
+                    nameInput.style.borderColor = '#FF6B35';
+                    isValid = false;
+                } else {
+                    nameInput.style.borderColor = '#87CEEB';
+                }
+            }
+            
+            if (!isValid) {
+                alert('Please enter names for all players!');
+                return;
+            }
+            
+            // Create players from setup
+            gameState.players = [];
+            
+            for (let i = 0; i < numPlayers; i++) {
+                const nameInput = document.getElementById(`playerName${i}`);
+                const character = characters.find(c => c.id === gameState.selectedCharacters[i]);
                 
                 gameState.players.push({
                     id: i,
-                    name: nameInput.value.trim() || `Player ${i + 1}`,
+                    name: nameInput.value.trim(),
                     character: character,
                     position: 0,
                     turnStartPosition: 0,
