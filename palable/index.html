@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palable - 80s Word Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a0033 0%, #2d004a 25%, #1a1a4a 50%, #0f0f3a 75%, #000022 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #00ffff;
+        }
+
+        .container {
+            max-width: 450px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.4rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff0080, #8000ff, #00ffff, #00ff41, #ff0080);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbow 3s ease-in-out infinite;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        @keyframes rainbow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 5px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            padding: 5px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .difficulty-btn {
+            background: transparent;
+            border: none;
+            color: #00ffff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .difficulty-btn.active {
+            background: #00ffff;
+            color: #1a0033;
+            text-shadow: none;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .hint-btn {
+            background: rgba(128, 0, 255, 0.2);
+            border: 2px solid #8000ff;
+            color: #8000ff;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hint-btn:hover:not(:disabled) {
+            background: rgba(128, 0, 255, 0.4);
+            box-shadow: 0 0 15px rgba(128, 0, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        .hint-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .new-game-btn {
+            background: linear-gradient(45deg, #ff0080, #8000ff);
+            border: 2px solid #ff0080;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .new-game-btn:hover {
+            box-shadow: 0 0 20px rgba(255, 0, 128, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            gap: 8px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #00ffff;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .game-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .game-cell {
+            width: 45px;
+            height: 45px;
+            border: 2px solid #00ffff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            color: #00ffff;
+            background: rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
+            transform-style: preserve-3d;
+        }
+
+        .game-cell.filled {
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            animation: glow 0.3s ease;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+        }
+
+        .game-cell.flip {
+            animation: flip 0.6s ease-in-out;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(0deg); }
+        }
+
+        .game-cell.correct {
+            background: linear-gradient(45deg, #39ff14, #00ff00);
+            border-color: #39ff14;
+            color: #000;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.6);
+        }
+
+        .game-cell.wrong-position {
+            background: linear-gradient(45deg, #ffff00, #ff8c00);
+            border-color: #ffff00;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
+        }
+
+        .game-cell.not-in-word {
+            background: linear-gradient(45deg, #666666, #404040) !important;
+            border-color: #666666 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(102, 102, 102, 0.4) !important;
+        }
+
+        .keyboard {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .key {
+            min-width: 55px;
+            height: 55px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            color: #00ffff;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .key:hover {
+            background: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .key.wide {
+            min-width: 85px;
+            font-size: 1.2rem;
+            padding: 0 10px;
+        }
+
+        .key.used-correct {
+            background: linear-gradient(45deg, #39ff14, #00ff00);
+            border-color: #39ff14;
+            color: #000;
+        }
+
+        .key.used-wrong-position {
+            background: linear-gradient(45deg, #ffff00, #ff8c00);
+            border-color: #ffff00;
+            color: #000;
+        }
+
+        .key.used-not-in-word {
+            background: linear-gradient(45deg, #666666, #404040);
+            border-color: #666666;
+            color: #ffffff;
+            opacity: 0.6;
+        }
+
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(45deg, #1a0033, #2d004a);
+            border: 3px solid #00ffff;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            z-index: 1000;
+            max-width: 90%;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .message.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .message h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #00ff41;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .message p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #00ffff;
+        }
+
+        .message button {
+            background: linear-gradient(45deg, #ff0080, #8000ff);
+            border: 2px solid #ff0080;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .message button:hover {
+            box-shadow: 0 0 20px rgba(255, 0, 128, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .hint-display {
+            background: rgba(128, 0, 255, 0.3);
+            border: 2px solid #8000ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            color: #ffffff;
+            font-style: italic;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+            max-width: 100%;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Particle Systems */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .confetti-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: confetti-fall 2s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .spark-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #00ffff;
+            animation: spark-burst 0.6s ease-out forwards;
+        }
+
+        @keyframes spark-burst {
+            0% {
+                transform: scale(1) translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) translate(var(--dx), var(--dy));
+                opacity: 0;
+            }
+        }
+
+        .star-particle {
+            position: absolute;
+            color: #8000ff;
+            font-size: 12px;
+            animation: star-twinkle 1.5s ease-in-out;
+        }
+
+        @keyframes star-twinkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2) rotate(180deg);
+            }
+        }
+
+        .constellation-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #8000ff, transparent);
+            opacity: 0;
+            animation: constellation-draw 1s ease-in-out forwards;
+        }
+
+        @keyframes constellation-draw {
+            0% {
+                width: 0;
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                width: var(--line-length);
+                opacity: 0.6;
+            }
+        }
+
+        /* Enhanced letter typing effects */
+        .game-cell.typing-spark {
+            animation: typing-spark-effect 0.3s ease-out;
+        }
+
+        @keyframes typing-spark-effect {
+            0% {
+                box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(0, 255, 255, 0.8), 
+                           0 0 35px rgba(0, 255, 255, 0.6),
+                           0 0 45px rgba(0, 255, 255, 0.4);
+                transform: scale(1.05);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+                transform: scale(1);
+            }
+        }
+
+        /* Background constellation */
+        .background-constellation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .bg-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #8000ff;
+            border-radius: 50%;
+            box-shadow: 0 0 4px #8000ff;
+            animation: bg-star-twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes bg-star-twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .back-to-games {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-games:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            text-decoration: none;
+            color: #00ffff;
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .game-cell {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+            
+            .key {
+                min-width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+            
+            .key.wide {
+                min-width: 70px;
+                font-size: 1rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .back-to-games {
+                position: static;
+                margin-bottom: 10px;
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background constellation -->
+    <div class="background-constellation" id="bgConstellation"></div>
+    
+    <!-- Particle container for all effects -->
+    <div class="particle-container" id="particleContainer"></div>
+    
+    <a href="../index.html" class="back-to-games">🏠 All Games</a>
+    
+    <div class="container">
+        <h1 class="title">PALABLE</h1>
+        
+        <div class="controls">
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" data-difficulty="easy">EASY</button>
+                <button class="difficulty-btn" data-difficulty="medium">MEDIUM</button>
+                <button class="difficulty-btn" data-difficulty="hard">HARD</button>
+            </div>
+            
+            <button class="hint-btn" id="hintBtn" title="Get a hint">?</button>
+            <button class="new-game-btn" id="newGameBtn">NEW GAME</button>
+        </div>
+
+        <div id="hintDisplay" class="hint-display" style="display: none;"></div>
+        
+        <div class="game-grid" id="gameGrid">
+            <!-- Grid will be generated by JavaScript -->
+        </div>
+        
+        <div class="keyboard" id="keyboard">
+            <!-- Keyboard will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <div id="gameMessage" class="message">
+        <h2 id="messageTitle"></h2>
+        <p id="messageText"></p>
+        <button onclick="closeMessage()">CONTINUE</button>
+    </div>
+
+    <script>
+        'use strict';
+
+        // Word lists for different difficulty levels
+        const WORD_LISTS = {
+            easy: [
+                'HOUSE', 'WORLD', 'GREAT', 'HEART', 'HAPPY', 'LIGHT', 'PLACE', 'RIGHT', 'WATER', 'MUSIC',
+                'SMILE', 'BREAD', 'PEACE', 'DREAM', 'SLEEP', 'CHAIR', 'TABLE', 'SWEET', 'FRESH', 'CLEAN',
+                'PLANT', 'RIVER', 'BEACH', 'CANDY', 'PARTY', 'DANCE', 'LAUGH', 'SUNNY', 'CLOUD', 'SHINE',
+                'GRASS', 'BIRDS', 'OCEAN', 'BOOKS', 'GAMES', 'MAGIC', 'YOUTH', 'BONUS', 'LUCKY', 'GRACE',
+                'BRAVE', 'SMART', 'STONE', 'APPLE', 'GRAPE', 'FIELD', 'HORSE', 'SWING', 'TOWER', 'WHEEL'
+            ],
+            medium: [
+                'BADGE', 'CHARM', 'FLAIR', 'GLOBE', 'HEDGE', 'IRONY', 'JOUST', 'KNELT', 'LEMON', 'MANGO',
+                'NOVEL', 'OLIVE', 'PRISM', 'QUEST', 'RIDGE', 'SPICE', 'THETA', 'URBAN', 'VIVID', 'WHEAT',
+                'XERUS', 'YACHT', 'ZILCH', 'ABYSS', 'BLITZ', 'CIVIC', 'DWARF', 'EXCEL', 'FJORD', 'GNOME',
+                'HAIKU', 'INDEX', 'JAZZY', 'KAYAK', 'LLAMA', 'MIRTH', 'NYMPH', 'OZONE', 'PIXEL', 'QUIRK',
+                'RAPID', 'SQUAD', 'TOXIC', 'ULTRA', 'VIXEN', 'WALTZ', 'XYLEM', 'YOUNG', 'ZESTY', 'AMBER'
+            ],
+            hard: [
+                'ABODE', 'EPOCH', 'GLYPH', 'HYMEN', 'ICHOR', 'JULEP', 'KAYAK', 'LYMPH', 'MYRRH', 'NYMPH',
+                'OUZOS', 'PSALM', 'QUALM', 'RAZED', 'SYLPH', 'THYME', 'UVULA', 'VYING', 'WRYLY', 'XYSTS',
+                'YACHT', 'ZYMES', 'AWASH', 'BLURT', 'CAULK', 'DWEEB', 'ETHOS', 'FJORD', 'GIZMO', 'HUNCH',
+                'IMBUE', 'JOWLS', 'KNACK', 'LYCRA', 'MURKY', 'NEXUS', 'OVERT', 'PROXY', 'QUASH', 'REIGN',
+                'SKULK', 'TWANG', 'USURP', 'VAGUE', 'WHISK', 'XEROX', 'YEARN', 'ZONAL', 'AZURE', 'BANAL'
+            ]
+        };
+
+        // Hints for each word (creative and poetic)
+        const HINTS = {
+            // Easy words
+            'HOUSE': 'Where hearts gather and memories are made',
+            'WORLD': 'A sphere of infinite possibilities and wonder',
+            'GREAT': 'Beyond good, approaching magnificent',
+            'HEART': 'The rhythm that keeps love alive',
+            'HAPPY': 'A state where smiles come naturally',
+            'LIGHT': 'Darkness\' greatest enemy and hope\'s best friend',
+            'PLACE': 'Where you belong in this vast universe',
+            'RIGHT': 'The opposite of wrong, yet relative to perspective',
+            'WATER': 'Life\'s most essential liquid poetry',
+            'MUSIC': 'Mathematical emotions dancing through air',
+            'SMILE': 'A curve that straightens everything',
+            'BREAD': 'Staff of life, risen from humble grain',
+            'PEACE': 'War\'s gentle sister',
+            'DREAM': 'Sleep\'s greatest gift to the mind',
+            'SLEEP': 'Daily rehearsal for eternity',
+            'CHAIR': 'Four legs supporting human rest',
+            'TABLE': 'Where meals become memories',
+            'SWEET': 'Sugar\'s gift to the taste buds',
+            'FRESH': 'Newly born to this moment',
+            'CLEAN': 'Dirt\'s opposite and order\'s friend',
+            'PLANT': 'Green architect of oxygen',
+            'RIVER': 'Earth\'s liquid highway to the sea',
+            'BEACH': 'Where land and water hold hands',
+            'CANDY': 'Childhood\'s sweet ambassador',
+            'PARTY': 'Celebration wearing its dancing shoes',
+            'DANCE': 'Music made visible through movement',
+            'LAUGH': 'Joy\'s audible expression',
+            'SUNNY': 'When clouds take a holiday',
+            'CLOUD': 'Sky\'s cotton imagination',
+            'SHINE': 'Light\'s way of showing off',
+            'GRASS': 'Earth\'s green carpet',
+            'BIRDS': 'Feathered singers of the sky',
+            'OCEAN': 'The planet\'s liquid meditation',
+            'BOOKS': 'Portable doorways to other worlds',
+            'GAMES': 'Structured fun with rules to break',
+            'MAGIC': 'Reality bending to wonder\'s will',
+            'YOUTH': 'Tomorrow\'s promise in today\'s form',
+            'BONUS': 'Unexpected gift from fortune',
+            'LUCKY': 'When chance wears a smile',
+            'GRACE': 'Elegance in motion and spirit',
+            'BRAVE': 'Fear\'s unwavering opponent',
+            'SMART': 'Intelligence wearing confidence',
+            'STONE': 'Earth\'s patient memory keeper',
+            'APPLE': 'Tree\'s roundest gift',
+            'GRAPE': 'Purple pearls of vine wisdom',
+            'FIELD': 'Earth\'s open canvas',
+            'HORSE': 'Four-legged poetry in motion',
+            'SWING': 'Gravity\'s playful dance partner',
+            'TOWER': 'Ambition reaching skyward',
+            'WHEEL': 'Circle that conquered distance',
+
+            // Medium words
+            'BADGE': 'Symbol worn close to pride',
+            'CHARM': 'Magnetism disguised as personality',
+            'FLAIR': 'Style with a theatrical twist',
+            'GLOBE': 'World held in palm-sized wonder',
+            'HEDGE': 'Nature\'s living fence',
+            'IRONY': 'Life\'s favorite plot twist',
+            'JOUST': 'Honor\'s horseback conversation',
+            'KNELT': 'Humility\'s chosen posture',
+            'LEMON': 'Sunshine compressed into citrus',
+            'MANGO': 'Tropical sweetness in golden form',
+            'NOVEL': 'Innovation bound in pages',
+            'OLIVE': 'Peace\'s edible ambassador',
+            'PRISM': 'Light\'s rainbow translator',
+            'QUEST': 'Purpose with adventure shoes',
+            'RIDGE': 'Mountain\'s sharp declaration',
+            'SPICE': 'Flavor\'s bold exclamation',
+            'THETA': 'Greek mathematics in letter form',
+            'URBAN': 'City\'s concrete poetry',
+            'VIVID': 'Color\'s most intense expression',
+            'WHEAT': 'Golden waves feeding nations',
+            'XERUS': 'African ground dweller with stripes',
+            'YACHT': 'Luxury floating on liquid dreams',
+            'ZILCH': 'Nothing\'s colloquial cousin',
+            'ABYSS': 'Depth\'s most profound mystery',
+            'BLITZ': 'Speed wearing lightning armor',
+            'CIVIC': 'Community\'s mirror reflection',
+            'DWARF': 'Height challenged by mighty spirit',
+            'EXCEL': 'Good\'s ambitious overachiever',
+            'FJORD': 'Ice\'s sculptural masterpiece',
+            'GNOME': 'Garden\'s bearded guardian',
+            'HAIKU': 'Poetry\'s minimalist meditation',
+            'INDEX': 'Order\'s helpful finger',
+            'JAZZY': 'Music with improvisational soul',
+            'KAYAK': 'Water\'s palindromic vessel',
+            'LLAMA': 'Alpaca\'s dramatic cousin',
+            'MIRTH': 'Joy\'s bubbling expression',
+            'NYMPH': 'Nature\'s ethereal spirit',
+            'OZONE': 'Atmosphere\'s protective embrace',
+            'PIXEL': 'Digital art\'s smallest building block',
+            'QUIRK': 'Personality\'s charming oddity',
+            'RAPID': 'Speed\'s water-carved expression',
+            'SQUAD': 'Unity in numbered formation',
+            'TOXIC': 'Harm disguised as substance',
+            'ULTRA': 'Beyond\'s ambitious prefix',
+            'VIXEN': 'Cunning wrapped in fur',
+            'WALTZ': 'Elegance in three-quarter time',
+            'XYLEM': 'Tree\'s internal water highway',
+            'YOUNG': 'Time\'s fresh beginning',
+            'ZESTY': 'Enthusiasm with citrus spirit',
+            'AMBER': 'Time trapped in golden resin',
+
+            // Hard words
+            'ABODE': 'Dwelling where soul finds rest',
+            'EPOCH': 'Time\'s significant chapter marker',
+            'GLYPH': 'Symbol carrying ancient whispers',
+            'HYMEN': 'Membrane of anatomical significance',
+            'ICHOR': 'Divine blood of mythical beings',
+            'JULEP': 'Mint\'s intoxicating southern embrace',
+            'LYMPH': 'Body\'s colorless protective fluid',
+            'MYRRH': 'Ancient resin of sacred value',
+            'PSALM': 'Prayer set to melodic worship',
+            'QUALM': 'Conscience\'s uncomfortable whisper',
+            'RAZED': 'Destruction\'s complete erasure',
+            'SYLPH': 'Air\'s graceful elemental spirit',
+            'THYME': 'Herb of aromatic memory',
+            'UVULA': 'Throat\'s dangling punctuation',
+            'VYING': 'Competition in active pursuit',
+            'WRYLY': 'Humor twisted with irony',
+            'XYSTS': 'Garden paths of ancient design',
+            'ZYMES': 'Fermentation\'s working agents',
+            'AWASH': 'Covered by liquid abundance',
+            'BLURT': 'Words escaping without permission',
+            'CAULK': 'Sealer of gaps and spaces',
+            'DWEEB': 'Nerd\'s less flattering cousin',
+            'ETHOS': 'Character\'s moral foundation',
+            'GIZMO': 'Gadget of mysterious function',
+            'HUNCH': 'Intuition\'s educated guess',
+            'IMBUE': 'To fill with quality or feeling',
+            'JOWLS': 'Cheeks surrendering to gravity',
+            'KNACK': 'Skill that comes naturally',
+            'LYCRA': 'Fabric that hugs and stretches',
+            'MURKY': 'Clarity\'s opposite in liquid form',
+            'NEXUS': 'Connection\'s central meeting point',
+            'OVERT': 'Obvious without disguise',
+            'PROXY': 'Representative in another\'s place',
+            'QUASH': 'To suppress with authority',
+            'REIGN': 'Power\'s temporal dominion',
+            'SKULK': 'Movement with secretive intent',
+            'TWANG': 'Sound\'s nasal countryside accent',
+            'USURP': 'To take power illegitimately',
+            'VAGUE': 'Clarity\'s elusive opposite',
+            'WHISK': 'To move with swift lightness',
+            'XEROX': 'Copying\'s corporate verb',
+            'YEARN': 'Desire\'s deep longing expression',
+            'ZONAL': 'Arranged in distinct regions',
+            'AZURE': 'Sky\'s most perfect blue',
+            'BANAL': 'Commonness lacking inspiration'
+        };
+
+        // Game state
+        let currentDifficulty = 'easy';
+        let currentWord = '';
+        let currentRow = 0;
+        let currentCol = 0;
+        let gameWon = false;
+        let gameLost = false;
+        let hintUsed = false;
+        let keyboardState = {}; // Track key states
+
+        // Dictionary loading system
+        const dictionaryCache = new Map();
+        
+        async function loadDictionary(letter) {
+            if (dictionaryCache.has(letter)) {
+                return dictionaryCache.get(letter);
+            }
+            
+            try {
+                const response = await fetch(`dict/${letter.toLowerCase()}.json`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const words = await response.json();
+                const wordSet = new Set(words);
+                dictionaryCache.set(letter, wordSet);
+                console.log(`Loaded ${words.length} words for letter '${letter}'`);
+                return wordSet;
+            } catch (error) {
+                console.warn(`Failed to load dictionary for ${letter}:`, error);
+                return null; // Fallback to current validation
+            }
+        }
+        
+        async function isValidWord(word) {
+            if (!word || word.length !== 5) return false;
+            
+            const firstLetter = word[0].toUpperCase();
+            const dictionary = await loadDictionary(firstLetter);
+            
+            if (dictionary) {
+                return dictionary.has(word.toUpperCase());
+            }
+            
+            // Fallback to current method if dictionary loading fails
+            const allWords = [...WORD_LISTS.easy, ...WORD_LISTS.medium, ...WORD_LISTS.hard];
+            return allWords.includes(word.toUpperCase());
+        }
+
+        // Particle System Functions
+        function createSuccessConfetti() {
+            const container = document.getElementById('particleContainer');
+            const colors = ['#00ff41', '#00ffff', '#ff0080', '#8000ff', '#ffff00'];
+            
+            // Create 50 confetti particles
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti-particle';
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 0.5 + 's';
+                particle.style.animationDuration = (1.5 + Math.random()) + 's';
+                
+                container.appendChild(particle);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 2500);
+            }
+        }
+
+        function createTypingSparks(element) {
+            const container = document.getElementById('particleContainer');
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Add typing spark effect to the cell
+            element.classList.add('typing-spark');
+            setTimeout(() => element.classList.remove('typing-spark'), 300);
+            
+            // Create 8 spark particles
+            for (let i = 0; i < 8; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark-particle';
+                
+                const angle = (i / 8) * Math.PI * 2;
+                const distance = 30 + Math.random() * 20;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+                
+                spark.style.left = centerX + 'px';
+                spark.style.top = centerY + 'px';
+                spark.style.setProperty('--dx', dx + 'px');
+                spark.style.setProperty('--dy', dy + 'px');
+                
+                container.appendChild(spark);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    if (spark.parentNode) {
+                        spark.parentNode.removeChild(spark);
+                    }
+                }, 600);
+            }
+        }
+
+        function createHintConstellation() {
+            const container = document.getElementById('particleContainer');
+            const hintDisplay = document.getElementById('hintDisplay');
+            const rect = hintDisplay.getBoundingClientRect();
+            
+            // Create constellation pattern around hint
+            const stars = [];
+            const numStars = 12;
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star-particle';
+                star.textContent = '✦';
+                
+                const angle = (i / numStars) * Math.PI * 2;
+                const radius = 100 + Math.random() * 50;
+                const x = rect.left + rect.width / 2 + Math.cos(angle) * radius;
+                const y = rect.top + rect.height / 2 + Math.sin(angle) * radius;
+                
+                star.style.left = x + 'px';
+                star.style.top = y + 'px';
+                star.style.animationDelay = (i * 0.1) + 's';
+                
+                container.appendChild(star);
+                stars.push({ element: star, x, y });
+                
+                // Remove after animation
+                setTimeout(() => {
+                    if (star.parentNode) {
+                        star.parentNode.removeChild(star);
+                    }
+                }, 2000);
+            }
+            
+            // Create connecting lines between stars
+            setTimeout(() => {
+                for (let i = 0; i < stars.length - 1; i++) {
+                    const star1 = stars[i];
+                    const star2 = stars[i + 1];
+                    
+                    const line = document.createElement('div');
+                    line.className = 'constellation-line';
+                    
+                    const dx = star2.x - star1.x;
+                    const dy = star2.y - star1.y;
+                    const length = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    
+                    line.style.left = star1.x + 'px';
+                    line.style.top = star1.y + 'px';
+                    line.style.transformOrigin = '0 50%';
+                    line.style.transform = `rotate(${angle}deg)`;
+                    line.style.setProperty('--line-length', length + 'px');
+                    line.style.animationDelay = (i * 0.2) + 's';
+                    
+                    container.appendChild(line);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        if (line.parentNode) {
+                            line.parentNode.removeChild(line);
+                        }
+                    }, 2000);
+                }
+            }, 500);
+        }
+
+        function createBackgroundConstellation() {
+            const container = document.getElementById('bgConstellation');
+            const numStars = 50;
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'bg-star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (2 + Math.random() * 2) + 's';
+                
+                container.appendChild(star);
+            }
+        }
+
+        // Initialize game
+        function initGame() {
+            generateGrid();
+            generateKeyboard();
+            createBackgroundConstellation();
+            newGame();
+        }
+
+        function generateGrid() {
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = '';
+            
+            for (let row = 0; row < 6; row++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'game-row';
+                
+                for (let col = 0; col < 5; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'game-cell';
+                    cell.id = `cell-${row}-${col}`;
+                    rowDiv.appendChild(cell);
+                }
+                
+                grid.appendChild(rowDiv);
+            }
+        }
+
+        function generateKeyboard() {
+            const keyboard = document.getElementById('keyboard');
+            const rows = [
+                ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+                ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL']
+            ];
+            
+            keyboard.innerHTML = '';
+            
+            rows.forEach(row => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'keyboard-row';
+                
+                row.forEach(key => {
+                    const keyButton = document.createElement('button');
+                    keyButton.className = 'key';
+                    keyButton.textContent = key;
+                    keyButton.onclick = () => handleKeyPress(key);
+                    
+                    if (key === 'ENTER' || key === 'DEL') {
+                        keyButton.classList.add('wide');
+                    }
+                    
+                    rowDiv.appendChild(keyButton);
+                });
+                
+                keyboard.appendChild(rowDiv);
+            });
+        }
+
+        function newGame() {
+            // Reset game state
+            currentRow = 0;
+            currentCol = 0;
+            gameWon = false;
+            gameLost = false;
+            hintUsed = false;
+            keyboardState = {};
+            
+            // Clear grid
+            document.querySelectorAll('.game-cell').forEach(cell => {
+                cell.textContent = '';
+                cell.className = 'game-cell';
+                // Explicitly remove all result classes
+                cell.classList.remove('correct', 'wrong-position', 'not-in-word', 'flip', 'filled');
+            });
+            
+            // Clear keyboard states
+            document.querySelectorAll('.key').forEach(key => {
+                key.className = 'key';
+                if (key.textContent === 'ENTER' || key.textContent === 'DEL') {
+                    key.classList.add('wide');
+                }
+            });
+            
+            // Hide hint
+            document.getElementById('hintDisplay').style.display = 'none';
+            document.getElementById('hintBtn').disabled = false;
+            
+            // Choose new word
+            const wordList = WORD_LISTS[currentDifficulty];
+            currentWord = wordList[Math.floor(Math.random() * wordList.length)];
+            
+            console.log('New word:', currentWord); // For debugging
+        }
+
+        async function handleKeyPress(key) {
+            if (gameWon || gameLost) return;
+            
+            if (key === 'ENTER') {
+                await submitGuess();
+            } else if (key === 'DEL') {
+                deleteLetter();
+            } else if (key.length === 1 && currentCol < 5) {
+                addLetter(key);
+            }
+        }
+
+        function addLetter(letter) {
+            if (currentCol >= 5) return;
+            
+            const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
+            cell.textContent = letter.toUpperCase();
+            cell.classList.add('filled');
+            
+            // Create typing sparks effect
+            createTypingSparks(cell);
+            
+            currentCol++;
+        }
+
+        function deleteLetter() {
+            if (currentCol === 0) return;
+            
+            currentCol--;
+            const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
+            cell.textContent = '';
+            cell.classList.remove('filled');
+        }
+
+        async function submitGuess() {
+            if (currentCol !== 5) return;
+            
+            const guess = [];
+            for (let i = 0; i < 5; i++) {
+                const cell = document.getElementById(`cell-${currentRow}-${i}`);
+                guess.push(cell.textContent);
+            }
+            
+            const guessWord = guess.join('');
+            
+            // Check if word exists using progressive dictionary loading
+            const isValid = await isValidWord(guessWord);
+            if (!isValid) {
+                showMessage('Invalid Word', 'That word is not in our dictionary!');
+                return;
+            }
+            
+            // Animate and color cells
+            animateRowReveal(currentRow, guessWord);
+            
+            // Update keyboard
+            updateKeyboard(guessWord);
+            
+            // Check win condition
+            if (guessWord === currentWord) {
+                gameWon = true;
+                setTimeout(() => {
+                    createSuccessConfetti();
+                    showMessage('Excellent!', `You guessed it in ${currentRow + 1} attempt${currentRow === 0 ? '' : 's'}!`);
+                }, 1500);
+                return;
+            }
+            
+            // Move to next row
+            currentRow++;
+            currentCol = 0;
+            
+            // Check lose condition
+            if (currentRow >= 6) {
+                gameLost = true;
+                setTimeout(() => {
+                    showMessage('Game Over', `The word was: ${currentWord}`);
+                }, 1500);
+            }
+        }
+
+        function animateRowReveal(row, guess) {
+            const wordArray = currentWord.split('');
+            const guessArray = guess.split('');
+            const result = [];
+            
+            // First pass: mark exact matches
+            for (let i = 0; i < 5; i++) {
+                if (guessArray[i] === wordArray[i]) {
+                    result[i] = 'correct';
+                    wordArray[i] = null; // Mark as used
+                } else {
+                    result[i] = null; // Will be determined in second pass
+                }
+            }
+            
+            // Second pass: mark wrong positions
+            for (let i = 0; i < 5; i++) {
+                if (result[i] === null) {
+                    const letterIndex = wordArray.indexOf(guessArray[i]);
+                    if (letterIndex !== -1) {
+                        result[i] = 'wrong-position';
+                        wordArray[letterIndex] = null; // Mark as used
+                    } else {
+                        result[i] = 'not-in-word';
+                    }
+                }
+            }
+            
+            // Animate each cell with staggered timing
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const cell = document.getElementById(`cell-${row}-${i}`);
+                    cell.classList.add('flip');
+                    
+                    setTimeout(() => {
+                        cell.classList.add(result[i]);
+                    }, 300);
+                }, i * 100);
+            }
+        }
+
+        function updateKeyboard(guess) {
+            const wordArray = currentWord.split('');
+            const guessArray = guess.split('');
+            
+            for (let i = 0; i < 5; i++) {
+                const letter = guessArray[i];
+                const key = document.querySelector(`.key:not(.wide)`).parentElement.querySelector(`[onclick*="${letter}"]`);
+                
+                if (!key) continue;
+                
+                let status = 'not-in-word';
+                if (currentWord.includes(letter)) {
+                    status = 'wrong-position';
+                }
+                if (wordArray[i] === letter) {
+                    status = 'correct';
+                }
+                
+                // Only upgrade key status (correct > wrong-position > not-in-word)
+                const currentStatus = keyboardState[letter] || 'none';
+                if (currentStatus === 'none' || 
+                    (currentStatus === 'not-in-word' && status !== 'not-in-word') ||
+                    (currentStatus === 'wrong-position' && status === 'correct')) {
+                    
+                    keyboardState[letter] = status;
+                    key.className = `key used-${status}`;
+                }
+            }
+        }
+
+        function showHint() {
+            if (hintUsed || gameWon || gameLost) return;
+            
+            const hint = HINTS[currentWord] || 'A mysterious word awaits your discovery';
+            const hintDisplay = document.getElementById('hintDisplay');
+            hintDisplay.textContent = hint;
+            hintDisplay.style.display = 'block';
+            
+            // Create constellation effect around hint
+            setTimeout(() => createHintConstellation(), 100);
+            
+            document.getElementById('hintBtn').disabled = true;
+            hintUsed = true;
+        }
+
+        function showMessage(title, text) {
+            document.getElementById('messageTitle').textContent = title;
+            document.getElementById('messageText').textContent = text;
+            document.getElementById('gameMessage').classList.add('show');
+        }
+
+        function closeMessage() {
+            document.getElementById('gameMessage').classList.remove('show');
+        }
+
+        function setDifficulty(difficulty) {
+            currentDifficulty = difficulty;
+            
+            // Update button states
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-difficulty="${difficulty}"]`).classList.add('active');
+            
+            // Start new game with new difficulty
+            newGame();
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toUpperCase();
+            
+            // Check if message modal is shown - Enter should close it
+            const messageModal = document.getElementById('gameMessage');
+            if (messageModal.classList.contains('show')) {
+                if (key === 'ENTER') {
+                    closeMessage();
+                    return;
+                }
+                // Ignore other keys when modal is open
+                return;
+            }
+            
+            if (key === 'ENTER') {
+                handleKeyPress('ENTER');
+            } else if (key === 'BACKSPACE') {
+                handleKeyPress('DEL');
+            } else if (key.match(/^[A-Z]$/)) {
+                handleKeyPress(key);
+            }
+        });
+
+        document.getElementById('newGameBtn').addEventListener('click', newGame);
+        document.getElementById('hintBtn').addEventListener('click', showHint);
+
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setDifficulty(btn.dataset.difficulty);
+            });
+        });
+
+        // Initialize the game when page loads
+        initGame();
+    </script>
+</body>
+</html>
