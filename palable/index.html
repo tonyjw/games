@@ -53,13 +53,44 @@
             50% { background-position: 100% 50%; }
         }
 
-        .controls {
-            display: flex;
+        .options-btn {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .options-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .options-menu {
+            display: none;
+            flex-direction: column;
             gap: 15px;
             align-items: center;
             margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #00ffff;
+        }
+
+        .options-menu.show {
+            display: flex;
+        }
+
+        .options-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
         }
 
         .difficulty-selector {
@@ -498,8 +529,8 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: rgba(0, 255, 255, 0.1);
-            border: 2px solid #00ffff;
+            background: transparent;
+            border: none;
             color: #00ffff;
             text-decoration: none;
             font-family: 'Courier New', monospace;
@@ -510,9 +541,9 @@
         }
 
         .back-to-games:hover {
-            background: rgba(0, 255, 255, 0.2);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-            text-decoration: none;
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: none;
+            text-decoration: underline;
             color: #00ffff;
         }
 
@@ -522,20 +553,25 @@
             }
             
             .game-cell {
-                width: 40px;
-                height: 40px;
-                font-size: 1.5rem;
+                width: 12vw;
+                height: 12vw;
+                font-size: 5vw;
+            }
+
+            .keyboard-row {
+                gap: 1vw;
             }
             
             .key {
-                min-width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
+                height: 12vw;
+                font-size: 4vw;
+                padding: 0 1vw;
+                min-width: 8vw;
             }
             
             .key.wide {
-                min-width: 70px;
-                font-size: 1rem;
+                font-size: 3.5vw;
+                min-width: 12vw;
             }
             
             .controls {
@@ -558,20 +594,23 @@
     <!-- Particle container for all effects -->
     <div class="particle-container" id="particleContainer"></div>
     
-    <a href="../index.html" class="back-to-games">🏠 All Games</a>
+    <a href="../index.html" class="back-to-games">All Games</a>
     
     <div class="container">
         <h1 class="title">PALABLE</h1>
         
-        <div class="controls">
+        <button class="options-btn" id="optionsBtn">OPTIONS</button>
+
+        <div class="options-menu" id="optionsMenu">
             <div class="difficulty-selector">
                 <button class="difficulty-btn active" data-difficulty="easy">EASY</button>
                 <button class="difficulty-btn" data-difficulty="medium">MEDIUM</button>
                 <button class="difficulty-btn" data-difficulty="hard">HARD</button>
             </div>
-            
-            <button class="hint-btn" id="hintBtn" title="Get a hint">?</button>
-            <button class="new-game-btn" id="newGameBtn">NEW GAME</button>
+            <div class="options-row">
+                <button class="hint-btn" id="hintBtn" title="Get a hint">?</button>
+                <button class="new-game-btn" id="newGameBtn">NEW GAME</button>
+            </div>
         </div>
 
         <div id="hintDisplay" class="hint-display" style="display: none;"></div>
@@ -1270,6 +1309,10 @@
             } else if (key.match(/^[A-Z]$/)) {
                 handleKeyPress(key);
             }
+        });
+
+        document.getElementById('optionsBtn').addEventListener('click', () => {
+            document.getElementById('optionsMenu').classList.toggle('show');
         });
 
         document.getElementById('newGameBtn').addEventListener('click', newGame);
