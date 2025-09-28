@@ -322,6 +322,10 @@ optional/
 # Test files (if any are added later)
 test-results/
 coverage/
+test-screenshots/
+
+# Playwright MCP (separate project, don't commit to games repo)
+playwright-mcp/
 
 # Temporary directories
 temp/
